@@ -5,6 +5,12 @@ analyzer:
     # cargokit is a standalone Dart build tool with its own pubspec and deps.
     # It is NOT part of the Flutter project and must not be analyzed.
     - cargokit/**
+    - build/**
+    - android/**
+    - ios/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
