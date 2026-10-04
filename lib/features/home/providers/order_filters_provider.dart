@@ -27,14 +27,13 @@ const kOrderFiltersKey = 'order_book_filters';
 @immutable
 class OrderFilters {
   const OrderFilters({
-    this.currencies = const [],
     this.paymentMethods = const [],
     this.rating = defaultRatingRange,
     this.premium = defaultPremiumRange,
   });
 
   /// Fiat codes (multi-select). Empty = any currency.
-  final List<String> currencies;
+  //final List<String> currencies;
 
   /// Payment methods (multi-select), matched case-insensitively against an
   /// order's comma-separated list. Empty = any method.
@@ -47,7 +46,6 @@ class OrderFilters {
   /// counts. A multi-select counts once however many values it holds: the
   /// chip says which controls are on, the dialog says what they hold.
   int get activeCount =>
-      (currencies.isNotEmpty ? 1 : 0) +
       (paymentMethods.isNotEmpty ? 1 : 0) +
       (rating != defaultRatingRange ? 1 : 0) +
       (premium != defaultPremiumRange ? 1 : 0);
@@ -55,19 +53,16 @@ class OrderFilters {
   bool get isActive => activeCount > 0;
 
   OrderFilters copyWith({
-    List<String>? currencies,
     List<String>? paymentMethods,
     FilterRange? rating,
     FilterRange? premium,
   }) => OrderFilters(
-    currencies: currencies ?? this.currencies,
     paymentMethods: paymentMethods ?? this.paymentMethods,
     rating: rating ?? this.rating,
     premium: premium ?? this.premium,
   );
 
   Map<String, Object?> toJson() => {
-    'currencies': currencies,
     'paymentMethods': paymentMethods,
     'rating': [rating.min, rating.max],
     'premium': [premium.min, premium.max],
@@ -96,7 +91,7 @@ class OrderFilters {
     }
     if (decoded is! Map) return const OrderFilters();
     return OrderFilters(
-      currencies: _strings(decoded['currencies']),
+      //currencies: _strings(decoded['currencies']),
       paymentMethods: _strings(decoded['paymentMethods']),
       rating: _range(decoded['rating'], defaultRatingRange),
       premium: _range(decoded['premium'], defaultPremiumRange),
@@ -127,18 +122,13 @@ class OrderFilters {
   @override
   bool operator ==(Object other) =>
       other is OrderFilters &&
-      listEquals(other.currencies, currencies) &&
       listEquals(other.paymentMethods, paymentMethods) &&
       other.rating == rating &&
       other.premium == premium;
 
   @override
-  int get hashCode => Object.hash(
-    Object.hashAll(currencies),
-    Object.hashAll(paymentMethods),
-    rating,
-    premium,
-  );
+  int get hashCode =>
+      Object.hash(Object.hashAll(paymentMethods), rating, premium);
 }
 
 /// The order-book filters, kept across launches (issue #575).
