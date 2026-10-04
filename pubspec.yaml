@@ -82,7 +82,7 @@ dependencies:
   shimmer: ^3.0.0
 
   # Required by flutter_rust_bridge generated code
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
   # Masonry grid for the order book on tablet/desktop: cards keep their
   # natural height (no fixed tile ratio) and keyed rows still move on re-sort
   flutter_staggered_grid_view: ^0.7.0
@@ -101,12 +101,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   # Required by flutter_rust_bridge_codegen generate
-  freezed: ^2.5.7
-  build_runner: ^2.4.13
+  freezed: ^3.2.5
+  build_runner: ^2.15.1
   # Generates the iOS/Android launcher icons from assets/images/launcher-icon.png
   flutter_launcher_icons: ^0.14.2
   # Parses lib/ in the automation contract test, so only code counts as a use
-  analyzer: ^7.7.1
+  analyzer: ^10.2.0
 
 flutter:
   uses-material-design: true
