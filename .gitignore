@@ -56,3 +56,8 @@ test/web/smoke/smoke-failure.png
 
 # VS Code local configuration
 .vscode/
+
+# Generated plugin registrants (rust_builder example)
+rust_builder/example/linux/flutter/generated_*
+rust_builder/example/macos/Flutter/Generated*
+rust_builder/example/windows/flutter/generated_*
