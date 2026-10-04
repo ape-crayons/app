@@ -176,33 +176,15 @@ final settingsProvider =
 final Set<String> _supportedLanguageCodes =
     AppLocalizations.supportedLocales.map((l) => l.languageCode).toSet();
 
-/// The first supported language among the device's preferred locales, or
-/// English when none is supported.
-///
-/// Iterates the ordered [PlatformDispatcher.locales] rather than just the
-/// primary locale, so a device preferring e.g. `pt-BR` then `es` starts in
-/// Spanish instead of falling back to English. Used as the first-run default.
-String _deviceDefaultLanguage() {
-  //  for (final locale in WidgetsBinding.instance.platformDispatcher.locales) {
-  //    if (_supportedLanguageCodes.contains(locale.languageCode)) {
-  //      return locale.languageCode;
-  //    }
-  //  }
-  return 'en';
-}
-
 /// Normalizes a stored or selected language to a supported code.
 ///
-/// Strips any region qualifier (e.g. `es-MX` -> `es`) and falls back to the
-/// device default when the value is empty or unsupported (e.g. `pt`). Keeping
-/// [AppSettingsState.language] normalized ensures the effective locale, the
-/// Settings display and the language picker all agree.
+/// Strips any region qualifier (e.g. `es-MX` -> `es`) and falls back to
+/// Spanish (`es`) when the value is empty or unsupported (e.g. `pt`).
+/// Keeping [AppSettingsState.language] normalized ensures the effective
+/// locale, the Settings display and the language picker always agree.
 String _normalizeLanguage(String? stored) {
   final code = (stored ?? '').split(RegExp(r'[-_]')).first;
-  return _supportedLanguageCodes.contains(code)
-      ? code
-      //      : _deviceDefaultLanguage();
-      : 'es';
+  return _supportedLanguageCodes.contains(code) ? code : 'es';
 }
 
 /// Current display locale, derived automatically from [settingsProvider].

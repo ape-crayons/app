@@ -18,7 +18,6 @@ void main() {
 
     test('reads back what toJson wrote', () {
       const filters = OrderFilters(
-        currencies: ['ARS', 'USD'],
         paymentMethods: ['Mercado Pago'],
         rating: (min: 4.0, max: 5.0),
         premium: (min: -3.0, max: 2.0),
@@ -56,7 +55,6 @@ void main() {
       expect(filters.rating, defaultRatingRange);
       expect(filters.premium, defaultPremiumRange);
       // The broken controls do not take the good one with them.
-      expect(filters.currencies, ['ARS']);
     });
 
     test('a range that is not a pair falls back to its default', () {
@@ -73,36 +71,19 @@ void main() {
     test('a list keeps its non-empty strings, trimmed, once each', () {
       final filters = OrderFilters.fromStored(
         stored({
-          'currencies': ['ARS', ' ARS ', '', 7, null, 'USD'],
-          'paymentMethods': 'Pix',
+          'paymentMethods': ['SPEI', ' Retiro ', '', 7, null, 'Pix'],
         }),
       );
-      expect(filters.currencies, ['ARS', 'USD']);
-      expect(filters.paymentMethods, isEmpty);
-    });
-
-    test('a code the catalogue no longer lists is kept, not dropped', () {
-      // The filter still matches that currency's orders; the dialog shows
-      // every selected value, so it can still be deselected.
-      final filters = OrderFilters.fromStored(
-        stored({
-          'currencies': ['XYZ'],
-        }),
-      );
-      expect(filters.currencies, ['XYZ']);
+      expect(filters.paymentMethods, ['SPEI', 'Pix']);
     });
   });
 
   group('OrderFilters.activeCount', () {
     test('counts the controls in use, not the values they hold', () {
       expect(const OrderFilters().activeCount, 0);
-      expect(
-        const OrderFilters(currencies: ['ARS', 'USD', 'EUR']).activeCount,
-        1,
-      );
+      expect(const OrderFilters(paymentMethods: ['Pix']).activeCount, 1);
       expect(
         const OrderFilters(
-          currencies: ['ARS'],
           paymentMethods: ['Pix'],
           rating: (min: 3.0, max: 5.0),
           premium: (min: -10.0, max: 0.0),
@@ -116,12 +97,12 @@ void main() {
     test('restores the filters chosen in an earlier session', () async {
       SharedPreferences.setMockInitialValues({
         kOrderFiltersKey: stored(
-          const OrderFilters(currencies: ['ARS']).toJson(),
+          const OrderFilters(paymentMethods: ['Pix']).toJson(),
         ),
       });
       final notifier = OrderFiltersNotifier();
       await pumpEventQueue();
-      expect(notifier.state.currencies, ['ARS']);
+      expect(notifier.state.paymentMethods, ['Pix']);
     });
 
     test('persists a change', () async {
@@ -140,18 +121,18 @@ void main() {
       () async {
         SharedPreferences.setMockInitialValues({
           kOrderFiltersKey: stored(
-            const OrderFilters(currencies: ['ARS']).toJson(),
+            const OrderFilters(paymentMethods: ['SEPA']).toJson(),
           ),
         });
         final disk = Completer<SharedPreferences>();
         final notifier = OrderFiltersNotifier(prefs: () => disk.future);
 
-        final saved = notifier.set(const OrderFilters(currencies: ['USD']));
+        final saved = notifier.set(const OrderFilters(paymentMethods: ['Pix']));
         disk.complete(await SharedPreferences.getInstance());
         await saved;
         await pumpEventQueue();
 
-        expect(notifier.state.currencies, ['USD']);
+        expect(notifier.state.paymentMethods, ['Pix']);
       },
     );
 
@@ -177,7 +158,7 @@ void main() {
     test('clear empties the stored copy, not only the state', () async {
       SharedPreferences.setMockInitialValues({
         kOrderFiltersKey: stored(
-          const OrderFilters(currencies: ['ARS']).toJson(),
+          const OrderFilters(paymentMethods: ['Pix']).toJson(),
         ),
       });
       final notifier = OrderFiltersNotifier();
@@ -198,8 +179,8 @@ void main() {
       expect(notifier.state, const OrderFilters());
 
       // A write that fails the same way still applies for the session.
-      await notifier.set(const OrderFilters(currencies: ['EUR']));
-      expect(notifier.state.currencies, ['EUR']);
+      await notifier.set(const OrderFilters(paymentMethods: ['Pix']));
+      expect(notifier.state.paymentMethods, ['Pix']);
     });
   });
 }

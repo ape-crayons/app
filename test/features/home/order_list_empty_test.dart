@@ -16,14 +16,12 @@ const _filteredHint = 'No orders match your filters.';
 Future<ProviderContainer> _pump(
   WidgetTester tester, {
   required List<OrderItem> book,
-  List<String> currencies = const [],
+  List<String> paymentMethods = const [],
 }) async {
   SharedPreferences.setMockInitialValues({});
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        orderBookProvider.overrideWith((ref) => Stream.value(book)),
-      ],
+      overrides: [orderBookProvider.overrideWith((ref) => Stream.value(book))],
       child: MaterialApp(
         theme: buildDarkTheme(),
         locale: const Locale('en'),
@@ -38,7 +36,7 @@ Future<ProviderContainer> _pump(
   );
   await container
       .read(orderFiltersProvider.notifier)
-      .set(OrderFilters(currencies: currencies));
+      .set(OrderFilters(paymentMethods: paymentMethods));
   // Let the overridden book stream deliver.
   await tester.pump();
   return container;
@@ -60,15 +58,17 @@ void main() {
   ) async {
     final container = await _pump(
       tester,
-      book: [fakeOrder(kind: 'sell', fiatCode: 'EUR')],
-      currencies: ['USD'],
+      book: [
+        fakeOrder(kind: 'sell', fiatCode: 'EUR', paymentMethod: 'SEPA instant'),
+      ],
+      paymentMethods: ['Nequi'], // método que NO existe en la orden
     );
 
     expect(find.text(_filteredHint), findsOneWidget);
     await tester.tap(find.text('Clear filters'));
     await tester.pump();
 
-    expect(container.read(orderFiltersProvider).currencies, isEmpty);
+    expect(container.read(orderFiltersProvider).paymentMethods, isEmpty);
     expect(find.text('Clear filters'), findsNothing);
   });
 
@@ -79,7 +79,7 @@ void main() {
     await _pump(
       tester,
       book: [fakeOrder(kind: 'buy', fiatCode: 'USD')],
-      currencies: ['USD'],
+      paymentMethods: ['SEPA instant'],
     );
 
     expect(find.text(_genericHint), findsOneWidget);

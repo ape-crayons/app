@@ -355,13 +355,9 @@ final bookPaymentMethodsProvider = Provider.autoDispose<List<String>>((ref) {
   final orders =
       ref.watch(orderBookProvider).valueOrNull ?? const <OrderItem>[];
   final tab = ref.watch(homeOrderTypeProvider);
-  final currencies = ref.watch(
-    orderFiltersProvider.select((filters) => filters.currencies),
-  );
   final byToken = <String, String>{};
   for (final order in orders) {
     if (!_isListedOnTab(order, tab)) continue;
-    if (currencies.isNotEmpty && !currencies.contains(order.fiatCode)) continue;
     for (final label in order.paymentLabels) {
       byToken.putIfAbsent(label.toLowerCase(), () => label);
     }
@@ -389,7 +385,6 @@ final filteredOrdersProvider = Provider.autoDispose<List<OrderItem>>((ref) {
   final allOrders = ref.watch(orderBookProvider).valueOrNull ?? [];
   final orderType = ref.watch(homeOrderTypeProvider);
   final filters = ref.watch(orderFiltersProvider);
-  final selectedCurrencies = filters.currencies;
   final ratingRange = filters.rating;
   final premiumRange = filters.premium;
   final sort = ref.watch(orderSortProvider);
@@ -399,11 +394,6 @@ final filteredOrdersProvider = Provider.autoDispose<List<OrderItem>>((ref) {
 
   return allOrders.where((o) {
       if (!_isListedOnTab(o, orderType)) return false;
-
-      if (selectedCurrencies.isNotEmpty &&
-          !selectedCurrencies.contains(o.fiatCode)) {
-        return false;
-      }
 
       if (selectedMethods.isNotEmpty &&
           !o.paymentTokens.any(selectedMethods.contains)) {

@@ -53,17 +53,6 @@ void main() {
       expect(helper.ids(), ['pending']);
     });
 
-    test('currency filter keeps only selected fiat codes', () async {
-      final helper = await bookWith([
-        fakeOrder(id: 'usd', kind: 'sell', fiatCode: 'USD'),
-        fakeOrder(id: 'eur', kind: 'sell', fiatCode: 'EUR'),
-      ]);
-      helper.setTab(OrderType.buy);
-      await helper.filter(const OrderFilters(currencies: ['EUR']));
-
-      expect(helper.ids(), ['eur']);
-    });
-
     test('payment method filter matches any comma-separated token', () async {
       final helper = await bookWith([
         fakeOrder(id: 'multi', kind: 'sell', paymentMethod: 'Wire, Revolut'),
@@ -213,34 +202,6 @@ void main() {
       helper.setTab(OrderType.buy);
 
       expect(helper.container.read(bookPaymentMethodsProvider), ['Wise']);
-    });
-
-    test('only the picked currencies\' orders offer their methods', () async {
-      final helper = await bookWith([
-        fakeOrder(
-          id: 'eur',
-          kind: 'sell',
-          fiatCode: 'EUR',
-          paymentMethod: 'SEPA instant',
-        ),
-        fakeOrder(
-          id: 'ars',
-          kind: 'sell',
-          fiatCode: 'ARS',
-          paymentMethod: 'Efectivo',
-        ),
-      ]);
-      helper.setTab(OrderType.buy);
-      expect(helper.container.read(bookPaymentMethodsProvider), [
-        'Efectivo',
-        'SEPA instant',
-      ]);
-
-      await helper.filter(const OrderFilters(currencies: ['EUR']));
-
-      expect(helper.container.read(bookPaymentMethodsProvider), [
-        'SEPA instant',
-      ]);
     });
 
     test(
