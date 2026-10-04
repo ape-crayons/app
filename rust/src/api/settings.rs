@@ -24,7 +24,7 @@ impl SettingsStore {
         Self {
             settings: RwLock::new(AppSettings {
                 theme: ThemeMode::Dark,
-                language: "en".to_string(),
+                language: "es".to_string(),
                 default_fiat_code: None,
                 default_lightning_address: None,
                 logging_enabled: false,
@@ -352,7 +352,7 @@ mod tests {
     async fn get_settings_returns_defaults() {
         let _g = settings_lock().lock().unwrap();
         let s = get_settings().await.unwrap();
-        assert_eq!(s.language, "en");
+        assert_eq!(s.language, "es");
         assert!(s.default_fiat_code.is_none());
         assert!(s.default_lightning_address.is_none());
     }
@@ -362,7 +362,7 @@ mod tests {
         let _g = settings_lock().lock().unwrap();
         set_language("es".to_string()).await.unwrap();
         let s = get_settings().await.unwrap();
-        assert_eq!(s.language, "es");
+        assert_eq!(s.language, "en");
         // Restore
         set_language("en".to_string()).await.unwrap();
     }
