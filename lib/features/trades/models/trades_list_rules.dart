@@ -353,10 +353,8 @@ String formatFiatAmount({
   required double? max,
   required String locale,
 }) {
-  String fmt(double v) => NumberFormat.decimalPatternDigits(
-    locale: locale,
-    decimalDigits: v == v.truncateToDouble() ? 0 : 2,
-  ).format(v);
+  String fmt(double v) =>
+      '\$${NumberFormat.decimalPatternDigits(locale: locale, decimalDigits: v == v.truncateToDouble() ? 0 : 2).format(v)}';
   if (amount != null && amount > 0) return fmt(amount);
   if (min != null && max != null) return '${fmt(min)} – ${fmt(max)}';
   return '—';
