@@ -1,10 +1,15 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mostro/core/app_theme.dart';
+import 'package:mostro/features/chat/models/reaction_rules.dart';
 import 'package:mostro/features/chat/widgets/encrypted_file_message.dart';
 import 'package:mostro/features/chat/widgets/encrypted_image_message.dart';
+import 'package:mostro/features/chat/widgets/message_actions_menu.dart';
+import 'package:mostro/features/chat/widgets/reaction_picker.dart';
+import 'package:mostro/features/order/widgets/order_detail_cards.dart';
 import 'package:mostro/l10n/app_localizations.dart';
 import 'package:mostro/src/rust/api/types.dart' as rust_types;
 
@@ -26,6 +31,7 @@ class ChatMessage {
     required this.createdAt,
     this.messageType = 'peer',
     this.attachment,
+    this.reaction,
   });
 
   /// Unique message identifier.
@@ -55,6 +61,12 @@ class ChatMessage {
   /// Message type: 'peer', 'admin', or 'system'.
   final String messageType;
 
+  /// The reaction this message carries, if any. Only the party who did not
+  /// write it can react (protocol chat.md, "Reactions"): on the
+  /// counterpart's message it is the user's, on the user's the
+  /// counterpart's.
+  final String? reaction;
+
   bool get isSystem => messageType == 'system';
 }
 
@@ -65,18 +77,26 @@ class ChatMessage {
 /// - Own messages → right-aligned, purple background, top-right square corner.
 /// - Peer messages → left-aligned, dark hue background, top-left square corner.
 /// - System messages → centered italic text, no bubble background.
-/// - Long-press → copies content to clipboard and shows a SnackBar.
+/// - Held for a second → the message's menu ([showMessageActionsMenu]):
+///   Copy for a text message, and the reactions when [onReact] is set; an
+///   attachment offers only the reactions, and without [onReact] no menu.
+/// - A reaction shows under the bubble.
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
     super.key,
     required this.message,
     required this.peerColorHue,
+    this.onReact,
   });
 
   final ChatMessage message;
 
   /// HSV hue (0–359) used to tint peer message bubbles.
   final int peerColorHue;
+
+  /// Sends the user's reaction to this message, an empty string withdrawing
+  /// it. Null where the user cannot react: their own messages.
+  final Future<void> Function(String emoji)? onReact;
 
 
   @override
@@ -118,87 +138,195 @@ class MessageBubble extends StatelessWidget {
     // An image fills its bubble; a thin frame keeps the bubble's colour.
     final isImage = attachment?.fileType == rust_types.FileType.image;
 
-    return GestureDetector(
-      // An attachment's content is its file name: nothing worth copying.
-      onLongPress: attachment != null
-          ? null
-          : () => _copyToClipboard(context, message.content),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.xs,
-        ),
-        child: Row(
-          mainAxisAlignment: mainAxisAlignment,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Flexible(
-              child: Column(
-                crossAxisAlignment: alignment,
-                children: [
-                  // Bubble
-                  Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.72,
-                    ),
-                    padding: isImage
-                        ? const EdgeInsets.all(4)
-                        : const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.sm,
-                          ),
-                    decoration: BoxDecoration(
-                      color: bubbleColor,
-                      borderRadius: borderRadius,
-                    ),
-                    child: switch (attachment) {
-                      null => Text(
-                          message.content,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      _ when isImage => EncryptedImageMessage(
-                          messageId: message.id,
-                          attachment: attachment,
-                        ),
-                      _ => EncryptedFileMessage(
-                          messageId: message.id,
-                          attachment: attachment,
-                        ),
-                    },
-                  ),
-                  const SizedBox(height: 2),
-                  // Timestamp
-                  Text(
-                    timestamp,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colors.textSubtle,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              ),
+    final bubble = Container(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.72,
+      ),
+      padding: isImage
+          ? const EdgeInsets.all(4)
+          : const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
             ),
-          ],
-        ),
+      decoration: BoxDecoration(
+        color: bubbleColor,
+        borderRadius: borderRadius,
+      ),
+      child: switch (attachment) {
+        null => Text(
+            message.content,
+            style: textTheme.bodyMedium?.copyWith(
+              // design-check: ignore DS-COL-1 — unchanged ink of the v1 bubbles (§14), moved here; the chat has no palette yet
+              color: Colors.white,
+            ),
+          ),
+        _ when isImage => EncryptedImageMessage(
+            messageId: message.id,
+            attachment: attachment,
+          ),
+        _ => EncryptedFileMessage(
+            messageId: message.id,
+            attachment: attachment,
+          ),
+      },
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
+      child: Row(
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Column(
+              crossAxisAlignment: alignment,
+              children: [
+                // An attachment's content is its file name: nothing worth
+                // copying. It opens the menu only to react to it.
+                if (attachment != null && onReact == null)
+                  bubble
+                else
+                  // The recognizer gives screen readers the long press; the
+                  // hint says what it opens (DS-A11Y-1).
+                  Semantics(
+                    button: true,
+                    enabled: true,
+                    onLongPressHint:
+                        AppLocalizations.of(context).messageMenuHint,
+                    child: Builder(
+                      builder: (bubbleContext) => RawGestureDetector(
+                        gestures: {
+                          LongPressGestureRecognizer:
+                              GestureRecognizerFactoryWithHandlers<
+                                  LongPressGestureRecognizer>(
+                            () => LongPressGestureRecognizer(
+                              duration: messageMenuHoldDuration,
+                            ),
+                            (recognizer) => recognizer.onLongPress =
+                                () => _openMenu(bubbleContext, bubble),
+                          ),
+                        },
+                        child: bubble,
+                      ),
+                    ),
+                  ),
+                if (message.reaction case final emoji?)
+                  _ReactionChip(emoji: emoji),
+                const SizedBox(height: 2),
+                // Timestamp
+                Text(
+                  timestamp,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colors.textSubtle,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void _copyToClipboard(BuildContext context, String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).messageCopied),
-        duration: const Duration(seconds: 2),
-      ),
+  /// Held for [messageMenuHoldDuration]: the message's menu, drawn over the
+  /// bubble that [bubbleContext] lays out.
+  Future<void> _openMenu(BuildContext bubbleContext, Widget bubble) async {
+    // Where the message is and what of it its list shows, or null once
+    // nobody can see it: disposed, or scrolled out of its list while the
+    // list keeps it built in its cache.
+    MessagePlace? anchor() {
+      if (!bubbleContext.mounted) return null;
+      final box = bubbleContext.findRenderObject() as RenderBox?;
+      if (box == null || !box.attached || !box.hasSize) return null;
+      final rect = box.localToGlobal(Offset.zero) & box.size;
+      final viewport =
+          Scrollable.maybeOf(bubbleContext)?.context.findRenderObject()
+              as RenderBox?;
+      if (viewport == null || !viewport.attached || !viewport.hasSize) {
+        return (rect: rect, visible: rect);
+      }
+      final list = viewport.localToGlobal(Offset.zero) & viewport.size;
+      if (!rect.overlaps(list)) return null;
+      return (rect: rect, visible: rect.intersect(list));
+    }
+
+    if (anchor() == null) return;
+    Feedback.forLongPress(bubbleContext);
+
+    final react = onReact;
+    final choice = await showMessageActionsMenu(
+      context: bubbleContext,
+      anchor: anchor,
+      bubble: bubble,
+      alignEnd: message.isMine,
+      canReact: react != null,
+      canCopy: message.attachment == null,
+      currentReaction: message.reaction,
     );
+    switch (choice) {
+      case null:
+        return;
+      case CopyMessage():
+        // Copied even if the chat closed meanwhile; only the confirmation
+        // needs the screen.
+        await Clipboard.setData(ClipboardData(text: message.content));
+        if (!bubbleContext.mounted) return;
+        showOrderDetailSnackBar(
+          bubbleContext,
+          AppLocalizations.of(bubbleContext).messageCopied,
+        );
+      case ReactWith(:final emoji):
+        await react?.call(_toggled(emoji));
+      case MoreReactions():
+        if (!bubbleContext.mounted) return;
+        final emoji = await showReactionPicker(bubbleContext);
+        if (emoji != null) await react?.call(_toggled(emoji));
+    }
   }
+
+  /// What picking [emoji] sends: the reaction already there takes it back,
+  /// as in Signal, whichever list it was picked from.
+  String _toggled(String emoji) =>
+      sameReaction(emoji, message.reaction) ? '' : emoji;
 
   String _formatTime(int unixSeconds) {
     final dt = DateTime.fromMillisecondsSinceEpoch(unixSeconds * 1000);
     return DateFormat.Hm().format(dt);
+  }
+}
+
+// ── Reaction ──────────────────────────────────────────────────────────────────
+
+const _pill = BorderRadius.all(Radius.circular(999));
+
+/// The reaction under a bubble, as a small pill.
+class _ReactionChip extends StatelessWidget {
+  const _ReactionChip({required this.emoji});
+
+  final String emoji;
+
+  @override
+  Widget build(BuildContext context) {
+    final book = OrderBookPalette.of(context);
+    return Semantics(
+      container: true,
+      label: AppLocalizations.of(context).messageReactionLabel(emoji),
+      excludeSemantics: true,
+      child: Container(
+        margin: const EdgeInsets.only(top: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: book.surface,
+          borderRadius: _pill,
+          border: Border.all(color: book.border),
+        ),
+        child: Text(emoji, style: const TextStyle(fontSize: 14)),
+      ),
+    );
   }
 }
 
