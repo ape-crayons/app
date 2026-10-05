@@ -90,6 +90,7 @@ dependencies:
   open_filex: ^4.7.0
   # 4.5 needs Dart 3.11; this app still supports Dart 3.7 (environment above).
   emoji_picker_flutter: ">=4.4.0 <4.5.0"
+  font_awesome_flutter: ^11.0.0
 
 dependency_overrides:
   # permission_handler_html 0.1.4+0 (published 2026-07-31) fails to compile

@@ -4149,4 +4149,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messageMenuHint => 'Open the message menu';
+
+  @override
+  String get drawerHelpMenuItem => 'Need help?';
 }

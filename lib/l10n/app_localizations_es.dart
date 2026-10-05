@@ -4180,4 +4180,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get messageMenuHint => 'Abrir el menú del mensaje';
+
+  @override
+  String get drawerHelpMenuItem => '¿Necesitas ayuda?';
 }

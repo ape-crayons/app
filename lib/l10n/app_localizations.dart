@@ -6939,6 +6939,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open the message menu'**
   String get messageMenuHint;
+
+  /// No description provided for @drawerHelpMenuItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help?'**
+  String get drawerHelpMenuItem;
 }
 
 class _AppLocalizationsDelegate

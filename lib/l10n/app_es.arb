@@ -1270,5 +1270,6 @@
   "messageMenuHint": "Abrir el menú del mensaje",
   "moreReactions": "Más reacciones",
   "messageReactionLabel": "Reacción: {emoji}",
-  "reactionSendFailed": "No se pudo enviar la reacción. Inténtalo de nuevo."
+  "reactionSendFailed": "No se pudo enviar la reacción. Inténtalo de nuevo.",
+  "drawerHelpMenuItem": "¿Necesitas ayuda?"
 }

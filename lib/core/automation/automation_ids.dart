@@ -31,6 +31,7 @@ class AutomationIds {
   static const String drawerAccount = 'drawer.account';
   static const String drawerSettings = 'drawer.settings';
   static const String drawerAbout = 'drawer.about';
+  static const String drawerHelp = 'drawer.help';
 
   // Onboarding — v2 has no community/node step in the walkthrough.
   static const String walkthroughBack = 'onboarding.walkthrough.back';

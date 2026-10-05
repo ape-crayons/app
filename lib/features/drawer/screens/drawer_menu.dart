@@ -20,6 +20,8 @@ import 'package:mostro/shared/mascot/mascot_stretch.dart';
 import 'package:mostro/shared/mascot/mostro_mood.dart';
 import 'package:mostro/shared/widgets/bottom_nav_bar.dart'
     show chatNotificationCountProvider;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ── Layout tokens (drawer redesign handoff, 3b / 3c) ─────────────────────────
 
@@ -420,6 +422,24 @@ class _SidebarContent extends StatelessWidget {
         l10n.drawerSettingsMenuItem,
         AppRoute.settings,
       ),
+      _MenuRow(
+        automationId: 'drawer_help',
+        palette: palette,
+        customIcon: FaIcon(
+          FontAwesomeIcons.telegram,
+          size: 19,
+          color: palette.icon,
+        ),
+        label: l10n.drawerHelpMenuItem,
+        showChevron: true,
+        onTap: () {
+          onNavigate?.call();
+          launchUrl(
+            Uri.parse('https://t.me/MostroMexico'),
+            mode: LaunchMode.externalApplication,
+          );
+        },
+      ),
       accountRow(
         AutomationIds.drawerAbout,
         Icons.info_outline,
@@ -666,19 +686,24 @@ class _MenuRow extends StatefulWidget {
   const _MenuRow({
     required this.automationId,
     required this.palette,
-    required this.icon,
+    this.icon,
+    this.customIcon,
     required this.label,
     required this.onTap,
     this.selected,
     this.badgeCount = 0,
     this.showChevron = false,
-  });
+  }) : assert(
+         icon != null || customIcon != null,
+         'Either icon or customIcon must be provided',
+       );
 
   /// Stable identifier for UI automation; see `AutomationIds`.
   final String automationId;
 
   final DrawerPalette palette;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
   final String label;
   final VoidCallback onTap;
 
@@ -741,7 +766,11 @@ class _MenuRowState extends State<_MenuRow> {
                 ),
                 child: Row(
                   children: [
-                    _IconTile(palette: palette, icon: widget.icon),
+                    _IconTile(
+                      palette: palette,
+                      icon: widget.icon,
+                      customIcon: widget.customIcon,
+                    ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
@@ -772,10 +801,11 @@ class _MenuRowState extends State<_MenuRow> {
 }
 
 class _IconTile extends StatelessWidget {
-  const _IconTile({required this.palette, required this.icon});
+  const _IconTile({required this.palette, this.icon, this.customIcon});
 
   final DrawerPalette palette;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -792,7 +822,9 @@ class _IconTile extends StatelessWidget {
           transform: _cssAngle(150),
         ),
       ),
-      child: Icon(icon, size: 19, color: palette.icon),
+      child: Center(
+        child: customIcon ?? Icon(icon, size: 19, color: palette.icon),
+      ),
     );
   }
 }

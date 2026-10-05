@@ -1,7 +1,7 @@
 {
   "@@locale": "de",
   "@@last_modified": "2026-03-31",
-  "appName": "Mostro",
+  "appName": "Mostro México",
   "loading": "Laden…",
   "error": "Fehler",
   "actionFailedAnnouncement": "Aktion fehlgeschlagen",
@@ -192,7 +192,7 @@
   "pubkeyLabel": "Öffentlicher Schlüssel",
   "relaysLabel": "Relays",
   "footerTagline": "Open-Source. Nicht-verwahrt. Privat.",
-  "drawerTitle": "Mostro",
+  "drawerTitle": "Mostro Mexico",
   "drawerTagline": "P2P-Handel",
   "drawerStageBadge": "Alpha",
   "drawerVersion": "Version {version}",
@@ -1270,5 +1270,6 @@
   "moreReactions": "Weitere Reaktionen",
   "messageReactionLabel": "Reaktion: {emoji}",
   "reactionSendFailed": "Die Reaktion konnte nicht gesendet werden. Bitte versuche es erneut.",
-  "messageMenuHint": "Nachrichtenmenü öffnen"
+  "messageMenuHint": "Nachrichtenmenü öffnen",
+  "drawerHelpMenuItem": "Brauchst du Hilfe?"
 }
