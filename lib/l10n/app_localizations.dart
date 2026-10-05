@@ -6904,7 +6904,7 @@ abstract class AppLocalizations {
   /// **'Share'**
   String get shareChatKeyConfirm;
 
-  /// Dispute chat app bar: tooltip and label of the indicator shown once the chat key went to the current solver
+  /// Dispute chat app bar: tooltip of the share-chat-key action once the chat key went to the current solver (it can still be sent again)
   ///
   /// In en, this message translates to:
   /// **'Chat key shared with the resolver'**
@@ -6934,7 +6934,7 @@ abstract class AppLocalizations {
   /// **'Couldn\'t send the reaction. Please try again.'**
   String get reactionSendFailed;
 
-  /// Screen-reader hint of a chat message: what holding it opens
+  /// Screen-reader hint of a chat message: what tapping it (or holding an attachment) opens
   ///
   /// In en, this message translates to:
   /// **'Open the message menu'**

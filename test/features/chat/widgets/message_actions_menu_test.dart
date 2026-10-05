@@ -9,8 +9,8 @@ import 'package:mostro/l10n/app_localizations.dart';
 
 const _text = 'CBU 0000003100010000000001';
 
-/// The long-press menu of a P2P chat message: held for a second, a text
-/// message offers Copy, and the counterpart's the reactions.
+/// The menu of a P2P chat message: tapped or held, a text message offers
+/// Copy, and the counterpart's the reactions.
 void main() {
   ChatMessage textMessage({
     bool isMine = false,
@@ -85,31 +85,80 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('holding a counterpart message for a second opens the menu', (
-    tester,
-  ) async {
+  testWidgets('tapping a counterpart message opens the menu', (tester) async {
     await pump(tester, textMessage());
 
-    await press(tester, const Duration(seconds: 1));
+    await tester.tap(find.text(_text));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Copy'), findsOneWidget);
+    expect(find.text('❤️'), findsOneWidget);
+  });
+
+  testWidgets('holding a message opens the menu as well', (tester) async {
+    await pump(tester, textMessage());
+
+    await press(tester, const Duration(milliseconds: 500));
 
     expect(find.text('Copy'), findsOneWidget);
   });
 
-  testWidgets('a shorter press opens nothing', (tester) async {
-    await pump(tester, textMessage());
+  testWidgets('scrolling over a message opens nothing', (tester) async {
+    await pump(tester, textMessage(), inLongList: true);
 
-    await press(tester, const Duration(milliseconds: 600));
+    await tester.drag(find.text(_text), const Offset(0, -200));
+    await tester.pumpAndSettle();
 
     expect(find.text('Copy'), findsNothing);
-    expect(find.text('Copied'), findsNothing);
   });
 
-  testWidgets('a press just under a second opens nothing', (tester) async {
-    await pump(tester, textMessage());
+  group('feedback', () {
+    /// The platform calls the bubble makes, by method name.
+    List<String> spyOnPlatform(WidgetTester tester) {
+      final calls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          calls.add(call.method);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      return calls;
+    }
 
-    await press(tester, const Duration(milliseconds: 999));
+    testWidgets(
+      'a tap gives the tap feedback, not the long-press vibration',
+      (tester) async {
+        final calls = spyOnPlatform(tester);
+        await pump(tester, textMessage());
 
-    expect(find.text('Copy'), findsNothing);
+        await tester.tap(find.text(_text));
+        await tester.pumpAndSettle();
+
+        expect(calls, contains('SystemSound.play'));
+        expect(calls, isNot(contains('HapticFeedback.vibrate')));
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+    );
+
+    testWidgets(
+      'a hold keeps the long-press vibration',
+      (tester) async {
+        final calls = spyOnPlatform(tester);
+        await pump(tester, textMessage());
+
+        await press(tester, const Duration(milliseconds: 500));
+
+        expect(calls, contains('HapticFeedback.vibrate'));
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+    );
   });
 
   testWidgets('a message at the bottom gets the menu above it, on screen', (
@@ -244,7 +293,7 @@ void main() {
     );
   });
 
-  testWidgets('a screen reader learns what holding a message opens', (
+  testWidgets('a screen reader learns what tapping a message opens', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
@@ -254,11 +303,43 @@ void main() {
       tester.getSemantics(find.text(_text)),
       isSemantics(
         isButton: true,
-        hasLongPressAction: true,
-        onLongPressHint: 'Open the message menu',
+        hasTapAction: true,
+        onTapHint: 'Open the message menu',
       ),
     );
     semantics.dispose();
+  });
+
+  // DS-CMP-6: a one-line bubble is ~36 dp tall, and a one-letter one
+  // narrower than 48 dp; the finger still gets a 48 × 48 target.
+  group('a short message is still a 48 dp target', () {
+    Rect bubbleOf(WidgetTester tester, String text) => tester.getRect(
+          find
+              .ancestor(of: find.text(text), matching: find.byType(Container))
+              .first,
+        );
+
+    testWidgets('a tap just under it opens its menu', (tester) async {
+      await pump(tester, textMessage(content: 'OK'), midScreen: true);
+      final bubble = bubbleOf(tester, 'OK');
+      expect(bubble.height, lessThan(48));
+
+      await tester.tapAt(bubble.bottomLeft + const Offset(8, 4));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Copy'), findsOneWidget);
+    });
+
+    testWidgets('a tap just beside it opens its menu', (tester) async {
+      await pump(tester, textMessage(content: 'k'), midScreen: true);
+      final bubble = bubbleOf(tester, 'k');
+      expect(bubble.width, lessThan(48));
+
+      await tester.tapAt(bubble.centerRight + const Offset(4, 0));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Copy'), findsOneWidget);
+    });
   });
 
   testWidgets('own messages open the menu without reactions', (

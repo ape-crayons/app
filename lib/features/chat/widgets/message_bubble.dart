@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -77,9 +76,10 @@ class ChatMessage {
 /// - Own messages → right-aligned, purple background, top-right square corner.
 /// - Peer messages → left-aligned, dark hue background, top-left square corner.
 /// - System messages → centered italic text, no bubble background.
-/// - Held for a second → the message's menu ([showMessageActionsMenu]):
-///   Copy for a text message, and the reactions when [onReact] is set; an
-///   attachment offers only the reactions, and without [onReact] no menu.
+/// - Tapped or held → the message's menu ([showMessageActionsMenu]): Copy
+///   for a text message, and the reactions when [onReact] is set. A tap on
+///   an attachment opens the file, so only holding it opens the menu, which
+///   offers just the reactions; without [onReact] it has no menu.
 /// - A reaction shows under the bubble.
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -105,6 +105,7 @@ class MessageBubble extends StatelessWidget {
       return _SystemMessage(message: message);
     }
 
+    // design-check: ignore DS-COL-11 — the v1 bubble colours (§14), unchanged; the chat has no palette yet
     final colors = Theme.of(context).extension<AppColors>();
     if (colors == null) throw StateError('AppColors theme extension must be registered');
     final textTheme = Theme.of(context).textTheme;
@@ -171,6 +172,42 @@ class MessageBubble extends StatelessWidget {
       },
     );
 
+    // An attachment's content is its file name: nothing worth copying. It
+    // opens the menu only to react to it.
+    final opensMenu = attachment == null || onReact != null;
+    // The menu draws over the bubble alone, though the whole column takes
+    // the gesture; set while the column builds, read when a gesture lands.
+    BuildContext? bubbleContext;
+    void openMenu({required bool held}) {
+      final anchorContext = bubbleContext;
+      if (anchorContext != null) _openMenu(anchorContext, bubble, held: held);
+    }
+
+    final column = Column(
+      crossAxisAlignment: alignment,
+      children: [
+        if (opensMenu)
+          Builder(
+            builder: (context) {
+              bubbleContext = context;
+              return bubble;
+            },
+          )
+        else
+          bubble,
+        if (message.reaction case final emoji?) _ReactionChip(emoji: emoji),
+        const SizedBox(height: 2),
+        // Timestamp
+        Text(
+          timestamp,
+          style: textTheme.bodySmall?.copyWith(
+            color: colors.textSubtle,
+            fontSize: 10,
+          ),
+        ),
+      ],
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -181,60 +218,52 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Flexible(
-            child: Column(
-              crossAxisAlignment: alignment,
-              children: [
-                // An attachment's content is its file name: nothing worth
-                // copying. It opens the menu only to react to it.
-                if (attachment != null && onReact == null)
-                  bubble
-                else
-                  // The recognizer gives screen readers the long press; the
-                  // hint says what it opens (DS-A11Y-1).
-                  Semantics(
+            child: !opensMenu
+                ? column
+                // The detector gives screen readers the gesture that opens
+                // the menu; the hint says what it opens (DS-A11Y-1).
+                : Semantics(
                     button: true,
                     enabled: true,
-                    onLongPressHint:
-                        AppLocalizations.of(context).messageMenuHint,
-                    child: Builder(
-                      builder: (bubbleContext) => RawGestureDetector(
-                        gestures: {
-                          LongPressGestureRecognizer:
-                              GestureRecognizerFactoryWithHandlers<
-                                  LongPressGestureRecognizer>(
-                            () => LongPressGestureRecognizer(
-                              duration: messageMenuHoldDuration,
-                            ),
-                            (recognizer) => recognizer.onLongPress =
-                                () => _openMenu(bubbleContext, bubble),
-                          ),
-                        },
-                        child: bubble,
+                    onTapHint: attachment == null
+                        ? AppLocalizations.of(context).messageMenuHint
+                        : null,
+                    onLongPressHint: attachment == null
+                        ? null
+                        : AppLocalizations.of(context).messageMenuHint,
+                    child: GestureDetector(
+                      // The bubble, its reaction and its time take the
+                      // gesture, at least 48 × 48 dp of it however short the
+                      // message (DS-CMP-6); the extra width sits on the
+                      // bubble's open side, so nothing visible moves.
+                      behavior: HitTestBehavior.opaque,
+                      // An attachment's own tap opens the file.
+                      onTap: attachment == null
+                          ? () => openMenu(held: false)
+                          : null,
+                      onLongPress: () => openMenu(held: true),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: _minTarget,
+                          minHeight: _minTarget,
+                        ),
+                        child: column,
                       ),
                     ),
                   ),
-                if (message.reaction case final emoji?)
-                  _ReactionChip(emoji: emoji),
-                const SizedBox(height: 2),
-                // Timestamp
-                Text(
-                  timestamp,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.textSubtle,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
     );
   }
 
-  /// Held for [messageMenuHoldDuration]: the message's menu, drawn over the
-  /// bubble that [bubbleContext] lays out.
-  Future<void> _openMenu(BuildContext bubbleContext, Widget bubble) async {
+  /// Tapped or held ([held]): the message's menu, drawn over the bubble
+  /// that [bubbleContext] lays out.
+  Future<void> _openMenu(
+    BuildContext bubbleContext,
+    Widget bubble, {
+    required bool held,
+  }) async {
     // Where the message is and what of it its list shows, or null once
     // nobody can see it: disposed, or scrolled out of its list while the
     // list keeps it built in its cache.
@@ -255,7 +284,11 @@ class MessageBubble extends StatelessWidget {
     }
 
     if (anchor() == null) return;
-    Feedback.forLongPress(bubbleContext);
+    // Each gesture its own feedback: the long-press vibration and the
+    // screen reader's long-press event on a tap would say the wrong thing.
+    held
+        ? Feedback.forLongPress(bubbleContext)
+        : Feedback.forTap(bubbleContext);
 
     final react = onReact;
     final choice = await showMessageActionsMenu(
@@ -302,6 +335,9 @@ class MessageBubble extends StatelessWidget {
 // ── Reaction ──────────────────────────────────────────────────────────────────
 
 const _pill = BorderRadius.all(Radius.circular(999));
+
+/// The smallest tap target a message gets, in dp (DS-CMP-6).
+const double _minTarget = 48;
 
 /// The reaction under a bubble, as a small pill.
 class _ReactionChip extends StatelessWidget {
