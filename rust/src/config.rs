@@ -15,7 +15,7 @@ use std::sync::RwLock;
 pub const DEFAULT_RELAYS: &[&str] = &[
     "wss://nostrmxn.lulus.com.mx",
     "wss://relay.mostro.network",
-    "wss://relay.mostro.network",
+    "wss://relay.shadowbip.com",
 ];
 
 /// Default Mostro daemon public key (hex, 32 bytes).
