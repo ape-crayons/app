@@ -259,7 +259,7 @@ class _MyOrderScreenState extends ConsumerState<MyOrderScreen> {
 
   /// `11 Sep 2026, 17:41` in the locale's own order.
   String _formatDate(BuildContext context, DateTime dt) {
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     return DateFormat.yMMMd(locale).add_Hm().format(dt);
   }
 }
@@ -280,7 +280,7 @@ class _AmountBlock extends StatelessWidget {
     final pal = OrderDetailPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final formats = OrderCardFormats.of(
-      Localizations.localeOf(context).toString(),
+      'es_MX',
     );
     final isSelling = order.kind == 'sell';
 

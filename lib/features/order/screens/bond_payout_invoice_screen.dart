@@ -256,7 +256,7 @@ class _BondPayoutInvoiceScreenState
   }
 
   String _date(int unixSecs) {
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     return DateFormat.yMMMd(
       locale,
     ).add_Hm().format(DateTime.fromMillisecondsSinceEpoch(unixSecs * 1000));

@@ -69,12 +69,12 @@ class OrderCardFormats {
     return '$text%';
   }
 
-  /// `832 – 5,000` for a range, `25` for a single amount.
+  /// `$832 – $5,000` for a range, `$25` for a single amount.
   String amount(OrderItem order) =>
       order.isRange
-          ? '${fiat.format(order.fiatAmountMin!)} – '
-              '${fiat.format(order.fiatAmountMax!)}'
-          : fiat.format(order.fiatAmount!);
+          ? '\$${fiat.format(order.fiatAmountMin!)} – '
+              '\$${fiat.format(order.fiatAmountMax!)}'
+          : '\$${fiat.format(order.fiatAmount!)}';
 }
 
 /// Order-book card (order-book handoff, variant 4b).
@@ -108,9 +108,7 @@ class OrderListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pal = OrderBookPalette.of(context);
-    final formats = OrderCardFormats.of(
-      Localizations.localeOf(context).toString(),
-    );
+    final formats = OrderCardFormats.of('es_MX');
     final isBestPremium = reason == OrderReason.bestPremium;
 
     // Material + InkWell (not GestureDetector) so each card is focusable,

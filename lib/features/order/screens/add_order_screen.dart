@@ -147,8 +147,7 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     return (group: symbols.GROUP_SEP, decimal: symbols.DECIMAL_SEP);
   }
 
-  String _locale(BuildContext context) =>
-      Localizations.localeOf(context).toString();
+  String _locale(BuildContext context) => 'es_MX';
 
   String? _canonical(String text, AmountSymbols symbols) => canonicalAmount(
     text,
@@ -307,9 +306,9 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     final fiat = NumberFormat('#,##0.##', locale);
     final amountText =
         isRange
-            ? '${fiat.format(double.parse(amounts[0]!))} – '
-                '${fiat.format(double.parse(amounts[1]!))} $fiatCode'
-            : '${fiat.format(double.parse(amounts[0]!))} $fiatCode';
+            ? '\$${fiat.format(double.parse(amounts[0]!))} – '
+                '\$${fiat.format(double.parse(amounts[1]!))} $fiatCode'
+            : '\$${fiat.format(double.parse(amounts[0]!))} $fiatCode';
     final amount = markPreview(amountText, PreviewRole.amount);
     final active =
         expirationHours == null

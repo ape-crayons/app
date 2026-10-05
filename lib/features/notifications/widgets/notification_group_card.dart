@@ -157,7 +157,7 @@ class _Header extends StatelessWidget {
     final colors = Theme.of(context).extension<AppColors>();
     final pal = ActivityPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     final green = colors?.mostroGreen ?? const Color(0xFF8CC63F);
     final textSec = colors?.textSecondary ?? const Color(0xFFB0B3C6);
     final shortId =

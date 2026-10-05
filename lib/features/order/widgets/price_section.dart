@@ -449,7 +449,7 @@ class _PriceSectionState extends ConsumerState<PriceSection> {
     final palette = OrderBookPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final symbols = NumberFormat.decimalPattern(
-      Localizations.localeOf(context).toString(),
+      'es_MX',
     ).symbols;
 
     return Column(

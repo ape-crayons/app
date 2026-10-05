@@ -327,7 +327,7 @@ class _TakeOrderScreenState extends ConsumerState<TakeOrderScreen> {
             : ref.watch(bondEstimateProvider(sats)).valueOrNull;
     if (estimate == null) return l10n.takeOrderBondNotice;
     final formats = OrderCardFormats.of(
-      Localizations.localeOf(context).toString(),
+      'es_MX',
     );
     return l10n.takeOrderBondNoticeEstimate(formats.decimal.format(estimate));
   }
@@ -542,7 +542,7 @@ class _AmountBlock extends ConsumerWidget {
     final book = OrderBookPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final formats = OrderCardFormats.of(
-      Localizations.localeOf(context).toString(),
+      'es_MX',
     );
     final label = TextStyle(fontSize: 11, color: book.textTertiary);
     // Watched so the estimate follows the node's rate; the screen refreshes
@@ -700,7 +700,7 @@ class _CounterpartyCard extends StatelessWidget {
     final pal = OrderDetailPalette.of(context);
     final l10n = AppLocalizations.of(context);
     final formats = OrderCardFormats.of(
-      Localizations.localeOf(context).toString(),
+      'es_MX',
     );
     final isNew = order.tradeCount == 0;
     final figure = TextStyle(color: book.textBody, fontWeight: FontWeight.w500);

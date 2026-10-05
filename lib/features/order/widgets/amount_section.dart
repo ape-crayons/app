@@ -168,7 +168,7 @@ class AmountSection extends ConsumerWidget {
               children: [
                 for (final amount in quickAmounts)
                   _QuickAmountChip(
-                    label: fiatFormat.format(amount),
+                    label: '\$${fiatFormat.format(amount)}',
                     onTap: () {
                       amountController.text = fiatFormat.format(amount);
                       onChanged();

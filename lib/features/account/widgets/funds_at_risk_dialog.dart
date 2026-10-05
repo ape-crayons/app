@@ -91,7 +91,7 @@ class _RiskRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final book = OrderBookPalette.of(context);
-    final locale = Localizations.localeOf(context).toLanguageTag();
+    const locale = 'es_MX';
     final sats = risk.amountSats;
 
     return Padding(

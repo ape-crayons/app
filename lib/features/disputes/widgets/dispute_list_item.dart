@@ -34,7 +34,7 @@ class DisputeListItem extends ConsumerWidget {
     final book = OrderBookPalette.of(context);
     final pal = ActivityPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     final open = dispute.status != DisputeStatus.resolved;
     final handle = dispute.peerHandle ?? l10n.orderDispute;
     final opened = relativeTimeLabel(

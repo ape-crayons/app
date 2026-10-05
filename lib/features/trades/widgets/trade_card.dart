@@ -34,7 +34,7 @@ class TradeCard extends ConsumerWidget {
     final book = OrderBookPalette.of(context);
     final pal = ActivityPalette.of(context);
     final l10n = AppLocalizations.of(context);
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     final needsAction = row.state.needsAction;
     final cashu = ref.watch(isCashuModeProvider);
 

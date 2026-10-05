@@ -288,7 +288,7 @@ class _PushMasterRowState extends ConsumerState<_PushMasterRow> {
           relativeTimeLabel(
             relativeTime(at.toLocal(), now: clock.now()),
             l10n,
-            Localizations.localeOf(context).toString(),
+            'es_MX',
           ),
         ),
     ].join(' · '),

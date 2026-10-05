@@ -679,7 +679,7 @@ class _TradeDetailScreenState extends ConsumerState<TradeDetailScreen>
     final trade = tradeAsync.valueOrNull;
     final peerRating = trade?.peerRating;
     final figures = _figures(trade, order);
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     final amount =
         figures == null
             ? null
@@ -1163,7 +1163,7 @@ class _TradeDetailScreenState extends ConsumerState<TradeDetailScreen>
   /// `created today 17:41`, or `created 11 Sep 2026, 17:41` in the locale's
   /// own order — the same format as the own-order screen.
   String _createdLabel(AppLocalizations l10n, DateTime dt) {
-    final locale = Localizations.localeOf(context).toString();
+    const locale = 'es_MX';
     final now = DateTime.now();
     if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
       return l10n.tradeCreatedTodayLabel(DateFormat.Hm(locale).format(dt));

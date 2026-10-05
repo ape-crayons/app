@@ -325,7 +325,7 @@ class _BalanceCard extends StatelessWidget {
             // wallet must not do.
             status?.balanceSats == null
                 ? '—'
-                : '${_fmtSats(status!.balanceSats!, Localizations.localeOf(context).toString())} ${l10n.aboutSatoshisSuffix}',
+                : '${_fmtSats(status!.balanceSats!, 'es_MX')} ${l10n.aboutSatoshisSuffix}',
             style: Theme.of(
               context,
             ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
