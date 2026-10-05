@@ -263,7 +263,7 @@ class _BrandCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Mostro',
+                  'Mostro México',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

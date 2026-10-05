@@ -49,7 +49,7 @@ class _MostroAppState extends ConsumerState<MostroApp> {
     final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
 
     return MaterialApp.router(
-      title: 'Mostro',
+      title: 'Mostro México',
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),

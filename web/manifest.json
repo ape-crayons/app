@@ -1,6 +1,6 @@
 {
-    "name": "Mostro",
-    "short_name": "Mostro",
+    "name": "Mostro México",
+    "short_name": "Mostro MX",
     "description": "Non-custodial, peer-to-peer Bitcoin exchange on Lightning, powered by Nostr.",
     "start_url": "./",
     "scope": "./",

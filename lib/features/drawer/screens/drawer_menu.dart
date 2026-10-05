@@ -236,6 +236,30 @@ class _Panel extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              // Fondo: imagen del Ángel de la Independencia
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/angel.jpg',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                  excludeFromSemantics: true,
+                ),
+              ),
+              // Overlay oscuro para legibilidad del menú
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.55),
+                        Colors.black.withValues(alpha: 0.92),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 top: -70,
                 left: -60,

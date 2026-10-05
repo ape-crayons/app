@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "@@last_modified": "2026-03-31",
-  "appName": "Mostro",
+  "appName": "Mostro México",
   "@appName": {
     "description": "Application name"
   },
@@ -817,7 +817,7 @@
   "@footerTagline": {
     "description": "Footer tagline on the About screen"
   },
-  "drawerTitle": "Mostro",
+  "drawerTitle": "Mostro México",
   "@drawerTitle": {
     "description": "Title shown at the top of the navigation drawer"
   },

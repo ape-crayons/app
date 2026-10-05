@@ -1,7 +1,7 @@
 {
   "@@locale": "es",
   "@@last_modified": "2026-03-31",
-  "appName": "Mostro",
+  "appName": "Mostro México",
   "loading": "Cargando…",
   "error": "Error",
   "actionFailedAnnouncement": "Acción fallida",
@@ -184,7 +184,7 @@
   "pubkeyLabel": "Clave pública",
   "relaysLabel": "Relays",
   "footerTagline": "Código abierto. Sin custodia. Privado.",
-  "drawerTitle": "Mostro",
+  "drawerTitle": "Mostro México",
   "drawerTagline": "Intercambio P2P",
   "drawerStageBadge": "Alfa",
   "drawerVersion": "Versión {version}",

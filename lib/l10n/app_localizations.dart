@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// Application name
   ///
   /// In en, this message translates to:
-  /// **'Mostro'**
+  /// **'Mostro México'**
   String get appName;
 
   /// Generic loading label
@@ -1207,7 +1207,7 @@ abstract class AppLocalizations {
   /// Title shown at the top of the navigation drawer
   ///
   /// In en, this message translates to:
-  /// **'Mostro'**
+  /// **'Mostro México'**
   String get drawerTitle;
 
   /// Subtitle under the Mostro wordmark in the drawer header (rendered uppercase)

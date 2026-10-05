@@ -130,11 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           palette: pal,
           onMenuTap: isDesktop ? null : _toggleDrawer,
         ),
-        _SideTabs(
-          palette: pal,
-          selected: orderType,
-          onSelected: selectSide,
-        ),
+        _SideTabs(palette: pal, selected: orderType, onSelected: selectSide),
         _FilterRow(
           palette: pal,
           count: filteredOrders.length,
@@ -167,13 +163,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // ── Scaffold layout ───────────────────────────────────────────────────────
     // Desktop: persistent sidebar + main content in a Row (no overlay drawer).
     // Mobile/tablet: Stack with optional overlay drawer.
+    // Fondo del área principal: imagen del Zócalo (solo desktop)
+    final mainContentWithBackground = Stack(
+      children: [
+        // Fondo: imagen del Zócalo de CDMX
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/zocalo.jpg',
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+            excludeFromSemantics: true,
+          ),
+        ),
+        // Overlay oscuro para legibilidad de las tarjetas
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.78),
+                  Colors.black.withValues(alpha: 0.92),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Contenido original
+        mainContent,
+      ],
+    );
+
     final body =
         isDesktop
             ? Row(
               children: [
                 const DrawerMenu(persistent: true),
                 const VerticalDivider(width: 1),
-                Expanded(child: mainContent),
+                Expanded(child: mainContentWithBackground),
               ],
             )
             : Stack(

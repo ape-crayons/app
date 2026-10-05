@@ -13,18 +13,17 @@ use std::sync::RwLock;
 /// stops at 300 events, `nos.lol` at 500 — so covering the node's whole set
 /// keeps the book reachable when one of them is throttling us.
 pub const DEFAULT_RELAYS: &[&str] = &[
+    "wss://nostrmxn.lulus.com.mx",
     "wss://relay.mostro.network",
-    "wss://nos.lol",
-    "wss://mostro-p2p.tech",
-    "wss://relay.shadowbip.com",
+    "wss://relay.mostro.network",
 ];
 
 /// Default Mostro daemon public key (hex, 32 bytes).
 pub const DEFAULT_MOSTRO_PUBKEY: &str =
-    "82fa8cb978b43c79b2156585bac2c011176a21d2aead6d9f7c575c005be88390";
+    "00003f6be51b51a1a0cf9c94232ab1bba1f5c1bfd5a0e8687e9647558536b791";
 
 /// Default Mostro daemon display name.
-pub const DEFAULT_MOSTRO_NAME: &str = "Mostro";
+pub const DEFAULT_MOSTRO_NAME: &str = "Mostro México";
 
 // ── Trusted node registry ────────────────────────────────────────────────────
 
@@ -46,47 +45,15 @@ pub struct TrustedNodeConfig {
 /// the community list changes upstream.
 pub const TRUSTED_MOSTRO_NODES: &[TrustedNodeConfig] = &[
     TrustedNodeConfig {
-        pubkey: "00000235a3e904cfe1213a8a54d6f1ec1bef7cc6bfaabd6193e82931ccf1366a",
-        region: "🇨🇺 Cuba",
-    },
-    TrustedNodeConfig {
-        pubkey: "0000cc02101ec29eea9ce623258752b9d7da66c27845ed26846dd0b0fc736b40",
-        region: "🇪🇸 España",
-    },
-    TrustedNodeConfig {
-        pubkey: "00000978acc594c506976c655b6decbf2d4af25ffdaa6680f2a9568b0a88441b",
-        region: "🇨🇴 Colombia",
-    },
-    TrustedNodeConfig {
-        pubkey: "00007cb3305fb972f5cc83f83a8fbca1e64e93c9d1369880a9fd62ef95d23f91",
-        region: "🇧🇴 Bolivia",
-    },
-    TrustedNodeConfig {
-        pubkey: "000009ee1e4b1dc7add19ab30e4ef854d7b562e208b62686fd9002b50b24dabb",
-        region: "🇻🇪 Venezuela",
-    },
-    TrustedNodeConfig {
-        pubkey: "b3626fe91b602bdbca3673bec0855221f41dc8f6d0e4027e51eaa525d68d87f2",
-        region: "🇦🇷 Argentina",
-    },
-    TrustedNodeConfig {
-        pubkey: "00037abd44e7a846689e230d5446abcd0d56a344fa81fff85c09d1929feda486",
-        region: "🇧🇷 Brasil",
-    },
-    TrustedNodeConfig {
-        pubkey: "da23a31d75572138ab8149911a04224812a34bda679caba7cb1824fdf7c592ec",
-        region: "🇪🇺 Europa",
-    },
-    TrustedNodeConfig {
-        pubkey: DEFAULT_MOSTRO_PUBKEY,
-        region: "🌐",
+        pubkey: "00003f6be51b51a1a0cf9c94232ab1bba1f5c1bfd5a0e8687e9647558536b791",
+        region: "🇲🇽 México",
     },
 ];
 
 /// The push server (docs/PUSH_NOTIFICATIONS.md §3). The Fly.io instance the
 /// server repository deploys; a build may point elsewhere with
 /// `PUSH_SERVER_URL` at compile time (forks, a local server under test).
-pub const DEFAULT_PUSH_SERVER_URL: &str = "https://mostro-push-server.fly.dev";
+pub const DEFAULT_PUSH_SERVER_URL: &str = "https://p2p.lulus.com.mx";
 
 static PUSH_SERVER_URL_OVERRIDE: RwLock<Option<String>> = RwLock::new(None);
 
