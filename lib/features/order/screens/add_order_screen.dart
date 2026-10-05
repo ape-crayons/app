@@ -23,7 +23,6 @@ import 'package:mostro/features/order/widgets/currency_section.dart';
 import 'package:mostro/features/order/widgets/order_preview_bar.dart';
 import 'package:mostro/features/order/widgets/payment_method_section.dart';
 import 'package:mostro/features/order/widgets/price_section.dart';
-import 'package:mostro/features/settings/providers/settings_provider.dart';
 import 'package:mostro/features/trades/providers/trades_providers.dart'
     show refreshTrades;
 import 'package:mostro/l10n/app_localizations.dart';
@@ -97,7 +96,7 @@ double? enteredAmount(String text) {
 /// [fiatOutOfNodeRange].
 @visibleForTesting
 ({int minSats, int maxSats, FiatAmountLimits limits})?
-    marketAmountsOutOfNodeRange(
+marketAmountsOutOfNodeRange(
   List<String> fiatAmounts,
   int? minOrder,
   int? maxOrder,
@@ -125,9 +124,7 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
           widget.orderType == 'buy' ? OrderType.buy : OrderType.sell;
       ref.read(selectedPaymentMethodsProvider.notifier).state = [];
       ref.read(customPaymentMethodsProvider.notifier).state = [];
-      final defaultFiat =
-          ref.read(settingsProvider).defaultFiatCode ?? 'USD';
-      ref.read(selectedFiatCodeProvider.notifier).state = defaultFiat;
+      ref.read(selectedFiatCodeProvider.notifier).state = 'MXN';
       ref.read(isMarketPriceProvider.notifier).state = true;
       ref.read(isRangeOrderProvider.notifier).state = false;
       ref.read(premiumValueProvider.notifier).state = 0.0;
@@ -154,10 +151,10 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
       Localizations.localeOf(context).toString();
 
   String? _canonical(String text, AmountSymbols symbols) => canonicalAmount(
-        text,
-        groupSeparator: symbols.group,
-        decimalSeparator: symbols.decimal,
-      );
+    text,
+    groupSeparator: symbols.group,
+    decimalSeparator: symbols.decimal,
+  );
 
   /// Toggles range mode, keeping the figure the user already typed: the
   /// single amount becomes the minimum and vice versa. The maximum is cleared
@@ -185,12 +182,13 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
   // ── Validation ────────────────────────────────────────────────────────────
 
   /// Canonical amount strings in play: `[amount]` or `[min, max]`.
-  List<String?> _amounts(bool isRange, AmountSymbols symbols) => isRange
-      ? [
-          _canonical(_minController.text, symbols),
-          _canonical(_maxController.text, symbols),
-        ]
-      : [_canonical(_amountController.text, symbols)];
+  List<String?> _amounts(bool isRange, AmountSymbols symbols) =>
+      isRange
+          ? [
+            _canonical(_minController.text, symbols),
+            _canonical(_maxController.text, symbols),
+          ]
+          : [_canonical(_amountController.text, symbols)];
 
   /// The deposit notice with the core's estimate when the order's sats can
   /// be told — fixed sats, or the fiat at the node's rate; a range is sized
@@ -205,16 +203,18 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     required double? rate,
     required double premium,
   }) {
-    final sats = !isMarket && fixedSatsStr.isNotEmpty
-        ? int.tryParse(fixedSatsStr)
-        : estimateSats(
-            fiat: double.tryParse(amounts.last ?? '') ?? 0,
-            rate: rate,
-            premium: isMarket ? premium : 0,
-          );
-    final estimate = sats == null || sats <= 0
-        ? null
-        : ref.watch(bondEstimateProvider(sats)).valueOrNull;
+    final sats =
+        !isMarket && fixedSatsStr.isNotEmpty
+            ? int.tryParse(fixedSatsStr)
+            : estimateSats(
+              fiat: double.tryParse(amounts.last ?? '') ?? 0,
+              rate: rate,
+              premium: isMarket ? premium : 0,
+            );
+    final estimate =
+        sats == null || sats <= 0
+            ? null
+            : ref.watch(bondEstimateProvider(sats)).valueOrNull;
     if (estimate == null) return l10n.createOrderBondNotice;
     return l10n.createOrderBondNoticeEstimate(
       NumberFormat.decimalPattern(locale).format(estimate),
@@ -226,13 +226,12 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     MostroInstance? node,
     double? rate,
     List<String?> amounts,
-  ) =>
-      marketAmountsOutOfNodeRange(
-        amounts.whereType<String>().toList(),
-        node?.minOrderAmount,
-        node?.maxOrderAmount,
-        rate,
-      );
+  ) => marketAmountsOutOfNodeRange(
+    amounts.whereType<String>().toList(),
+    node?.minOrderAmount,
+    node?.maxOrderAmount,
+    rate,
+  );
 
   /// The out-of-range message to show in the preview bar, or null when the
   /// entered amount is fine — or cannot be checked at all, in which case the
@@ -241,7 +240,7 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     required AppLocalizations l10n,
     required ({int min, int max})? satsRangeError,
     required ({int minSats, int maxSats, FiatAmountLimits limits})?
-        fiatRangeError,
+    fiatRangeError,
     required String fiatCode,
   }) {
     if (satsRangeError != null) {
@@ -255,14 +254,14 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     final limits = fiatRangeError.limits;
     return limits.isDisplayable
         ? l10n.orderAmountOutOfRangeFiat(
-            limits.minFiat,
-            limits.maxFiat,
-            fiatCode,
-          )
+          limits.minFiat,
+          limits.maxFiat,
+          fiatCode,
+        )
         : l10n.orderAmountOutOfRange(
-            fiatRangeError.minSats,
-            fiatRangeError.maxSats,
-          );
+          fiatRangeError.minSats,
+          fiatRangeError.maxSats,
+        );
   }
 
   bool _amountsValid(bool isRange, List<String?> amounts) {
@@ -306,16 +305,21 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
   }) {
     if (!_amountsValid(isRange, amounts)) return null;
     final fiat = NumberFormat('#,##0.##', locale);
-    final amountText = isRange
-        ? '${fiat.format(double.parse(amounts[0]!))} – '
-            '${fiat.format(double.parse(amounts[1]!))} $fiatCode'
-        : '${fiat.format(double.parse(amounts[0]!))} $fiatCode';
+    final amountText =
+        isRange
+            ? '${fiat.format(double.parse(amounts[0]!))} – '
+                '${fiat.format(double.parse(amounts[1]!))} $fiatCode'
+            : '${fiat.format(double.parse(amounts[0]!))} $fiatCode';
     final amount = markPreview(amountText, PreviewRole.amount);
-    final active = expirationHours == null
-        ? ''
-        : l10n.previewActiveSuffix(
-            markPreview(l10n.durationHours(expirationHours), PreviewRole.duration),
-          );
+    final active =
+        expirationHours == null
+            ? ''
+            : l10n.previewActiveSuffix(
+              markPreview(
+                l10n.durationHours(expirationHours),
+                PreviewRole.duration,
+              ),
+            );
     final isSell = side == OrderType.sell;
 
     final String sentence;
@@ -323,21 +327,29 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
       final sats = BigInt.tryParse(fixedSatsStr);
       if (sats == null || sats <= BigInt.zero) return null;
       final satsText = markPreview(
-        l10n.satsAmount(NumberFormat.decimalPattern(locale).format(sats.toInt())),
+        l10n.satsAmount(
+          NumberFormat.decimalPattern(locale).format(sats.toInt()),
+        ),
         PreviewRole.sats,
       );
-      sentence = isSell
-          ? l10n.previewSellFixed(satsText, amount, active)
-          : l10n.previewBuyFixed(satsText, amount, active);
+      sentence =
+          isSell
+              ? l10n.previewSellFixed(satsText, amount, active)
+              : l10n.previewBuyFixed(satsText, amount, active);
     } else if (premium.round() == 0) {
-      sentence = isSell
-          ? l10n.previewSellMarketExact(amount, active)
-          : l10n.previewBuyMarketExact(amount, active);
+      sentence =
+          isSell
+              ? l10n.previewSellMarketExact(amount, active)
+              : l10n.previewBuyMarketExact(amount, active);
     } else {
-      final premiumText = markPreview(formatPremium(premium), PreviewRole.premium);
-      sentence = isSell
-          ? l10n.previewSellMarket(amount, premiumText, active)
-          : l10n.previewBuyMarket(amount, premiumText, active);
+      final premiumText = markPreview(
+        formatPremium(premium),
+        PreviewRole.premium,
+      );
+      sentence =
+          isSell
+              ? l10n.previewSellMarket(amount, premiumText, active)
+              : l10n.previewBuyMarket(amount, premiumText, active);
     }
     return previewFragments(sentence);
   }
@@ -356,17 +368,22 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     // an out-of-range fixed-sats order (#282).
     final node = ref.read(mostroNodeProvider).valueOrNull;
     final fiatCode = ref.read(selectedFiatCodeProvider);
-    final outOfRange = !isMarket && !isRange && fixedSatsStr.isNotEmpty
-        ? satsOutOfNodeRange(
-            fixedSatsStr, node?.minOrderAmount, node?.maxOrderAmount)
-        : null;
-    final fiatOutOfRange = isMarket
-        ? _fiatRangeError(
-            node,
-            ref.read(exchangeRateProvider(fiatCode)).valueOrNull,
-            amounts,
-          )
-        : null;
+    final outOfRange =
+        !isMarket && !isRange && fixedSatsStr.isNotEmpty
+            ? satsOutOfNodeRange(
+              fixedSatsStr,
+              node?.minOrderAmount,
+              node?.maxOrderAmount,
+            )
+            : null;
+    final fiatOutOfRange =
+        isMarket
+            ? _fiatRangeError(
+              node,
+              ref.read(exchangeRateProvider(fiatCode)).valueOrNull,
+              amounts,
+            )
+            : null;
     final valid = _checkValid(
       methods: methods,
       isMarket: isMarket,
@@ -391,9 +408,10 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
         fiatCode: fiatCode,
         paymentMethod: methods.join(','),
         premium: premium,
-        amountSats: (!isMarket && fixedSatsStr.isNotEmpty)
-            ? BigInt.tryParse(fixedSatsStr)
-            : null,
+        amountSats:
+            (!isMarket && fixedSatsStr.isNotEmpty)
+                ? BigInt.tryParse(fixedSatsStr)
+                : null,
       );
 
       final order = await rust_orders.createOrder(params: params);
@@ -417,15 +435,20 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
       // CantDo rejections from Mostro arrive as errors from createOrder.
       // Strip the Rust error prefix for a cleaner message.
       final raw = e.toString();
-      final anyhowMatch = RegExp(r'^.*?AnyhowException\((.+)\)$').firstMatch(raw);
+      final anyhowMatch = RegExp(
+        r'^.*?AnyhowException\((.+)\)$',
+      ).firstMatch(raw);
       final msg = anyhowMatch != null ? anyhowMatch.group(1)! : raw;
       // The daemon never answered: show the localized "no response" message
       // instead of the raw marker. The order was not created.
-      final display =
-          localizedDaemonError(AppLocalizations.of(context), msg, fallback: msg);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(display)),
+      final display = localizedDaemonError(
+        AppLocalizations.of(context),
+        msg,
+        fallback: msg,
       );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(display)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -451,10 +474,14 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     final node = ref.watch(mostroNodeProvider).valueOrNull;
     final amounts = _amounts(isRange, symbols);
 
-    final satsRangeError = (!isMarket && !isRange && fixedSatsStr.isNotEmpty)
-        ? satsOutOfNodeRange(
-            fixedSatsStr, node?.minOrderAmount, node?.maxOrderAmount)
-        : null;
+    final satsRangeError =
+        (!isMarket && !isRange && fixedSatsStr.isNotEmpty)
+            ? satsOutOfNodeRange(
+              fixedSatsStr,
+              node?.minOrderAmount,
+              node?.maxOrderAmount,
+            )
+            : null;
     // Watched rather than read on submit, so the fetch is already in flight by
     // the time an amount is typed. Null while it is — and for good when the
     // node publishes no rate — which fails the check open (#337).
@@ -464,11 +491,11 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     // The quick chips approximate 10/25/50/100 USD in the chosen currency.
     // Both rates are BTC prices, so their ratio is the currency's USD rate.
     final usdRate = ref.watch(exchangeRateProvider('USD')).valueOrNull;
-    final fiatPerUsd = rate != null && usdRate != null && usdRate > 0
-        ? rate / usdRate
-        : null;
+    final fiatPerUsd =
+        rate != null && usdRate != null && usdRate > 0 ? rate / usdRate : null;
 
-    final isValid = _checkValid(
+    final isValid =
+        _checkValid(
           methods: methods,
           isMarket: isMarket,
           fixedSatsStr: fixedSatsStr,
@@ -485,20 +512,18 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
     );
     // A node that bonds makers asks for a deposit before publishing
     // (docs/ANTI_ABUSE_BOND.md §6.2): said here, before the tap.
-    final bondNotice = makerBondApplies(
-          policy: node?.bondPolicy,
-          applyTo: node?.bondApplyTo,
-        )
-        ? _bondNotice(
-            l10n,
-            locale: locale,
-            isMarket: isMarket,
-            fixedSatsStr: fixedSatsStr,
-            amounts: amounts,
-            rate: rate,
-            premium: premium,
-          )
-        : null;
+    final bondNotice =
+        makerBondApplies(policy: node?.bondPolicy, applyTo: node?.bondApplyTo)
+            ? _bondNotice(
+              l10n,
+              locale: locale,
+              isMarket: isMarket,
+              fixedSatsStr: fixedSatsStr,
+              amounts: amounts,
+              rate: rate,
+              premium: premium,
+            )
+            : null;
 
     return Scaffold(
       backgroundColor: palette.bg,
@@ -539,19 +564,21 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
                 automationId: AutomationIds.orderCreateSideSell,
               ),
             ],
-            activeStyleOf: (value) => value == OrderType.sell
-                ? PillActiveStyle(
-                    fill: create.sellActiveBg,
-                    border: create.sellActiveBorder,
-                    ink: create.sellInk,
-                  )
-                : PillActiveStyle(
-                    fill: palette.tabActiveFill,
-                    border: palette.tabActiveBorder,
-                    ink: palette.limeInk,
-                  ),
-            onSelected: (value) =>
-                ref.read(orderSideProvider.notifier).state = value,
+            activeStyleOf:
+                (value) =>
+                    value == OrderType.sell
+                        ? PillActiveStyle(
+                          fill: create.sellActiveBg,
+                          border: create.sellActiveBorder,
+                          ink: create.sellInk,
+                        )
+                        : PillActiveStyle(
+                          fill: palette.tabActiveFill,
+                          border: palette.tabActiveBorder,
+                          ink: palette.limeInk,
+                        ),
+            onSelected:
+                (value) => ref.read(orderSideProvider.notifier).state = value,
           ),
           const SizedBox(height: 14),
           _Card(
@@ -575,20 +602,21 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
       ),
       // Pinned: rises with the keyboard so the preview stays in view.
       bottomNavigationBar: OrderPreviewBar(
-        fragments: rangeWarning == null
-            ? _preview(
-                l10n: l10n,
-                locale: locale,
-                side: side,
-                isRange: isRange,
-                amounts: amounts,
-                fiatCode: fiatCode,
-                isMarket: isMarket,
-                premium: premium,
-                fixedSatsStr: fixedSatsStr,
-                expirationHours: node?.expirationHours,
-              )
-            : null,
+        fragments:
+            rangeWarning == null
+                ? _preview(
+                  l10n: l10n,
+                  locale: locale,
+                  side: side,
+                  isRange: isRange,
+                  amounts: amounts,
+                  fiatCode: fiatCode,
+                  isMarket: isMarket,
+                  premium: premium,
+                  fixedSatsStr: fixedSatsStr,
+                  expirationHours: node?.expirationHours,
+                )
+                : null,
         error: rangeWarning,
         notice: bondNotice,
         premiumFavour: premiumFavour(side, premium),

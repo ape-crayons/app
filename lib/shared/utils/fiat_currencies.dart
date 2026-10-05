@@ -29,6 +29,7 @@ final fiatCurrenciesProvider = FutureProvider<List<FiatCurrency>>((ref) async {
           flag: e['flag'] as String,
         ),
       )
+      .where((c) => c.code == 'MXN')
       .toList();
 });
 

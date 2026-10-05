@@ -395,6 +395,9 @@ final filteredOrdersProvider = Provider.autoDispose<List<OrderItem>>((ref) {
   return allOrders.where((o) {
       if (!_isListedOnTab(o, orderType)) return false;
 
+      // Cliente privado para México: solo órdenes en MXN.
+      if (o.fiatCode != 'MXN') return false;
+
       if (selectedMethods.isNotEmpty &&
           !o.paymentTokens.any(selectedMethods.contains)) {
         return false;
