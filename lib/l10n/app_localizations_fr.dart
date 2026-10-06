@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appName => 'Mostro Mexico';
+  String get appName => 'Mostro';
 
   @override
   String get loading => 'Chargement…';
@@ -669,7 +669,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get footerTagline => 'Open-source. Non-custodial. Privé.';
 
   @override
-  String get drawerTitle => 'Mostro Mexico';
+  String get drawerTitle => 'Mostro';
 
   @override
   String get drawerTagline => 'Échange P2P';
@@ -2143,9 +2143,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aboutCashuMintUrlLabel => 'Mint';
-
-  @override
-  String get aboutCashuMintNotAdvertised => 'Non annoncé';
 
   @override
   String get aboutCashuLocktimeLabel => 'Verrouillage du séquestre';
@@ -4136,8 +4133,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'Votre séquestre est verrouillé mais le nœud ne l\'a pas confirmé. Réessayer est sans risque : il ne sera pas verrouillé une seconde fois.';
 
   @override
-  String get lockEscrowMintUnknown =>
-      'Ce nœud n\'a pas publié son mint : il n\'y a nulle part où verrouiller l\'escrow.';
+  String get lockEscrowMintNotSupported =>
+      'Ce nœud laisse chaque ordre choisir son mint, et cette version de l\'app ne peut verrouiller l\'escrow que sur un nœud à mint unique.';
 
   @override
   String get lockEscrowNotRecorded =>
@@ -4215,5 +4212,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get messageMenuHint => 'Ouvrir le menu du message';
 
   @override
-  String get drawerHelpMenuItem => 'Besoin d\'aide ?';
+  String get cashuAnyMint => 'N\'importe quel mint';
+
+  @override
+  String get settingsMintLabel => 'Mint';
+
+  @override
+  String get settingsMintCopied => 'URL du mint copiée';
 }

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Mostro México';
+  String get appName => 'Mostro';
 
   @override
   String get loading => 'Loading…';
@@ -662,7 +662,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get footerTagline => 'Open-source. Non-custodial. Private.';
 
   @override
-  String get drawerTitle => 'Mostro México';
+  String get drawerTitle => 'Mostro';
 
   @override
   String get drawerTagline => 'P2P exchange';
@@ -2121,9 +2121,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutCashuMintUrlLabel => 'Mint';
-
-  @override
-  String get aboutCashuMintNotAdvertised => 'Not advertised';
 
   @override
   String get aboutCashuLocktimeLabel => 'Escrow locktime';
@@ -4072,8 +4069,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your escrow is locked but the node has not confirmed it. Retrying is safe — it will not lock a second time.';
 
   @override
-  String get lockEscrowMintUnknown =>
-      'This node has not published its mint, so there is nowhere to lock the escrow.';
+  String get lockEscrowMintNotSupported =>
+      'This node lets each order choose its mint, and this version of the app can only lock an escrow on a node with a single mint.';
 
   @override
   String get lockEscrowNotRecorded =>
@@ -4151,5 +4148,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messageMenuHint => 'Open the message menu';
 
   @override
-  String get drawerHelpMenuItem => 'Need help?';
+  String get cashuAnyMint => 'Any mint';
+
+  @override
+  String get settingsMintLabel => 'Mint';
+
+  @override
+  String get settingsMintCopied => 'Mint URL copied';
 }
