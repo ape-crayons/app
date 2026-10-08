@@ -109,7 +109,7 @@ abstract class AppLocalizations {
   /// Application name
   ///
   /// In en, this message translates to:
-  /// **'Mostro'**
+  /// **'Mostro México'**
   String get appName;
 
   /// Generic loading label
@@ -1255,7 +1255,7 @@ abstract class AppLocalizations {
   /// Title shown at the top of the navigation drawer
   ///
   /// In en, this message translates to:
-  /// **'Mostro'**
+  /// **'Mostro México'**
   String get drawerTitle;
 
   /// Subtitle under the Mostro wordmark in the drawer header (rendered uppercase)
@@ -6933,6 +6933,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open the message menu'**
   String get messageMenuHint;
+
+  /// No description provided for @drawerHelpMenuItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help?'**
+  String get drawerHelpMenuItem;
 
   /// Mint of a Cashu node that lists no mint and so accepts any the order's maker picks (MostroP2P/mostro#1047): value in Settings, About and the node selector
   ///

@@ -41,12 +41,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCcKUG4IkZ51YfTjZSCqNdZmT5dVH_ebnA',
-    appId: '1:375342057498:web:2cd68bf87a368a4886e9a3',
-    messagingSenderId: '375342057498',
-    projectId: 'mostro-mobile',
-    authDomain: 'mostro-mobile.firebaseapp.com',
-    storageBucket: 'mostro-mobile.firebasestorage.app',
+    apiKey: 'AIzaSyBWTwMdcKyLDSe27IG-O5ZQIXe1FPRxtMs',
+    appId: '1:1025036523112:web:c3fd097d34e0a392738ddd',
+    messagingSenderId: '1025036523112',
+    projectId: 'mostro-mexico-push',
+    authDomain: 'mostro-mexico-push.firebaseapp.com',
+    storageBucket: 'mostro-mexico-push.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(

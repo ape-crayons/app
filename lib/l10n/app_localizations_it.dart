@@ -9,7 +9,7 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
-  String get appName => 'Mostro';
+  String get appName => 'Mostro Mexico';
 
   @override
   String get loading => 'Caricamento…';
@@ -669,7 +669,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get footerTagline => 'Open-source. Non custodiale. Privato.';
 
   @override
-  String get drawerTitle => 'Mostro';
+  String get drawerTitle => 'Mostro Mexico';
 
   @override
   String get drawerTagline => 'Scambio P2P';
@@ -4190,6 +4190,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get messageMenuHint => 'Apri il menu del messaggio';
+
+  @override
+  String get drawerHelpMenuItem => 'Hai bisogno di aiuto?';
 
   @override
   String get cashuAnyMint => 'Qualsiasi mint';

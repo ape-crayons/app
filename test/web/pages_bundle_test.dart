@@ -85,8 +85,8 @@ void main() {
       final m = manifest();
 
       // Act / Assert
-      expect(m['name'], 'Mostro');
-      expect(m['short_name'], 'Mostro');
+      expect(m['name'], 'Mostro México');
+      expect(m['short_name'], 'Mostro MX');
       expect(m['description'], isNot(contains('Flutter')));
       expect(m['background_color'], isNot('#0175C2'));
       expect(m['theme_color'], isNot('#0175C2'));
@@ -226,7 +226,10 @@ void main() {
       // ...and asked whether Chrome would install it (#658): a lost manifest
       // link or icon leaves the page working and only removes the install.
       expect(yaml, contains('SMOKE_INSTALLABLE: "1"'));
-      expect(smoke.readAsStringSync(), contains('Page.getInstallabilityErrors'));
+      expect(
+        smoke.readAsStringSync(),
+        contains('Page.getInstallabilityErrors'),
+      );
     });
   });
 
@@ -374,24 +377,26 @@ void main() {
     final worker = File('web/firebase-messaging-sw.js');
     final logic = File('web/push_worker_logic.js');
 
-    test('index.html registers it, relative to the base path, after the shim',
-        () {
-      // Arrange
-      final html = indexHtml.readAsStringSync();
+    test(
+      'index.html registers it, relative to the base path, after the shim',
+      () {
+        // Arrange
+        final html = indexHtml.readAsStringSync();
 
-      // Act
-      final shimAt = html.indexOf('<script src="coi-serviceworker.min.js">');
-      final registerAt = html.indexOf("register('$messagingWorkerScript'");
-      final bootstrapAt = html.indexOf('flutter_bootstrap.js');
+        // Act
+        final shimAt = html.indexOf('<script src="coi-serviceworker.min.js">');
+        final registerAt = html.indexOf("register('$messagingWorkerScript'");
+        final bootstrapAt = html.indexOf('flutter_bootstrap.js');
 
-      // Assert — Firebase's default is the origin root, which under /app/ is
-      // a 404; a relative URL resolves against <base href>. After the shim,
-      // which must stay the first script.
-      expect(registerAt, greaterThan(shimAt));
-      expect(registerAt, lessThan(bootstrapAt));
-      expect(html, contains("scope: '$messagingWorkerScope'"));
-      expect(html, isNot(contains("'/$messagingWorkerScript'")));
-    });
+        // Assert — Firebase's default is the origin root, which under /app/ is
+        // a 404; a relative URL resolves against <base href>. After the shim,
+        // which must stay the first script.
+        expect(registerAt, greaterThan(shimAt));
+        expect(registerAt, lessThan(bootstrapAt));
+        expect(html, contains("scope: '$messagingWorkerScope'"));
+        expect(html, isNot(contains("'/$messagingWorkerScript'")));
+      },
+    );
 
     test('adds its tap listener before it imports the Firebase SDK', () {
       // Arrange
@@ -432,10 +437,10 @@ void main() {
       final js = worker.readAsStringSync();
 
       // Act
-      final values = RegExp(r"(apiKey|appId|messagingSenderId|projectId): '([^']+)'")
-          .allMatches(web)
-          .map((m) => (m.group(1)!, m.group(2)!))
-          .toList();
+      final values =
+          RegExp(
+            r"(apiKey|appId|messagingSenderId|projectId): '([^']+)'",
+          ).allMatches(web).map((m) => (m.group(1)!, m.group(2)!)).toList();
 
       // Assert
       expect(values, hasLength(4));
@@ -448,21 +453,25 @@ void main() {
       // Arrange — firebase_core_web pins the SDK the page imports; a worker
       // on another version is a second SDK talking to the same push scope.
       final config = File('.dart_tool/package_config.json').readAsStringSync();
-      final root = RegExp(
-        r'"name": "firebase_core_web",\s*"rootUri": "file://([^"]+)"',
-      ).firstMatch(config)!.group(1)!;
-      final pinned = RegExp(r"supportedFirebaseJsSdkVersion = '([^']+)'")
-          .firstMatch(
-            File('$root/lib/src/firebase_sdk_version.dart').readAsStringSync(),
-          )!
-          .group(1)!;
+      final root =
+          RegExp(
+            r'"name": "firebase_core_web",\s*"rootUri": "file://([^"]+)"',
+          ).firstMatch(config)!.group(1)!;
+      final pinned =
+          RegExp(r"supportedFirebaseJsSdkVersion = '([^']+)'")
+              .firstMatch(
+                File(
+                  '$root/lib/src/firebase_sdk_version.dart',
+                ).readAsStringSync(),
+              )!
+              .group(1)!;
       final js = worker.readAsStringSync();
 
       // Act
-      final imported = RegExp(r'firebasejs/([0-9.]+)/')
-          .allMatches(js)
-          .map((m) => m.group(1))
-          .toSet();
+      final imported =
+          RegExp(
+            r'firebasejs/([0-9.]+)/',
+          ).allMatches(js).map((m) => m.group(1)).toSet();
 
       // Assert
       expect(imported, {pinned});
@@ -473,20 +482,26 @@ void main() {
       // worker cannot, so it carries a copy for every locale. The locales
       // come from the translation files, so a new one cannot be missed here.
       final js = logic.readAsStringSync();
-      final locales = Directory('lib/l10n')
-          .listSync()
-          .map((f) => RegExp(r'app_([a-z]{2})\.arb$').firstMatch(f.path)?.group(1))
-          .whereType<String>()
-          .toList()
-        ..sort();
+      final locales =
+          Directory('lib/l10n')
+              .listSync()
+              .map(
+                (f) => RegExp(
+                  r'app_([a-z]{2})\.arb$',
+                ).firstMatch(f.path)?.group(1),
+              )
+              .whereType<String>()
+              .toList()
+            ..sort();
       expect(locales, isNotEmpty);
 
       // Act / Assert
       for (final locale in locales) {
         final arb = File('lib/l10n/app_$locale.arb').readAsStringSync();
-        final body = RegExp(r'"pushNewMessageBody": "([^"]+)"')
-            .firstMatch(arb)!
-            .group(1)!;
+        final body =
+            RegExp(
+              r'"pushNewMessageBody": "([^"]+)"',
+            ).firstMatch(arb)!.group(1)!;
         expect(js, contains("$locale: '$body'"), reason: locale);
       }
     });
@@ -494,9 +509,10 @@ void main() {
     test('Dart, index.html, the smoke test and CI agree on the worker', () {
       // Arrange — Dart registers the same script and scope index.html does;
       // a mismatch is a second registration the token is never bound to.
-      final dart = File(
-        'lib/features/notifications/services/web_push_web.dart',
-      ).readAsStringSync();
+      final dart =
+          File(
+            'lib/features/notifications/services/web_push_web.dart',
+          ).readAsStringSync();
       final js = smoke.readAsStringSync();
       final yaml = webBuild.readAsStringSync();
 
