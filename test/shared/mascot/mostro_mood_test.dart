@@ -189,5 +189,157 @@ void main() {
       expect(isLoopingMood(MostroMood.celebrating), isFalse);
       expect(isLoopingMood(MostroMood.neutral), isFalse);
     });
+
+    test('offline lasts as long as the outage, a trade step plays once', () {
+      expect(isLoopingMood(MostroMood.offline), isTrue);
+      for (final mood in const [
+        MostroMood.escrowLocked,
+        MostroMood.fiatSent,
+        MostroMood.disputed,
+        MostroMood.canceled,
+        MostroMood.published,
+        MostroMood.loved,
+        MostroMood.thankful,
+        MostroMood.refused,
+      ]) {
+        expect(isLoopingMood(mood), isFalse, reason: mood.name);
+      }
+    });
+  });
+
+  group('moodSticker', () {
+    test('each mood wears its sticker, and rest wears the plain mascot', () {
+      expect(moodSticker(MostroMood.neutral), isNull);
+      expect(moodSticker(MostroMood.happy), 'waving');
+      expect(moodSticker(MostroMood.dizzy), 'confused');
+      expect(moodSticker(MostroMood.asleep), 'bored');
+      expect(moodSticker(MostroMood.impatient), 'thinking');
+      expect(moodSticker(MostroMood.celebrating), 'celebrate');
+    });
+
+    test('each trade step and app event wears its own', () {
+      expect(moodSticker(MostroMood.escrowLocked), 'escrow');
+      expect(moodSticker(MostroMood.fiatSent), 'money');
+      expect(moodSticker(MostroMood.disputed), 'dispute');
+      expect(moodSticker(MostroMood.canceled), 'cry');
+      expect(moodSticker(MostroMood.offline), 'scared');
+      expect(moodSticker(MostroMood.published), 'rocket');
+      expect(moodSticker(MostroMood.loved), 'love');
+      expect(moodSticker(MostroMood.thankful), 'thanks');
+      expect(moodSticker(MostroMood.refused), 'facepalm');
+    });
+
+    test('every mood but rest has one', () {
+      for (final mood in MostroMood.values) {
+        if (mood == MostroMood.neutral) continue;
+        expect(moodSticker(mood), isNotNull, reason: mood.name);
+      }
+    });
+  });
+
+  group('pickMood', () {
+    test('rests when nothing asks for a mood', () {
+      expect(pickMood(const []), MostroMood.neutral);
+    });
+
+    test('offline beats everything, a dispute everything else', () {
+      expect(
+        pickMood(const [
+          MostroMood.disputed,
+          MostroMood.offline,
+          MostroMood.celebrating,
+        ]),
+        MostroMood.offline,
+      );
+      expect(
+        pickMood(const [MostroMood.disputed, MostroMood.fiatSent]),
+        MostroMood.disputed,
+      );
+      expect(
+        pickMood(const [MostroMood.fiatSent, MostroMood.disputed]),
+        MostroMood.disputed,
+      );
+    });
+
+    test('a reaction beats a mood that only sets the scene', () {
+      expect(
+        pickMood(const [MostroMood.impatient, MostroMood.escrowLocked]),
+        MostroMood.escrowLocked,
+      );
+      expect(
+        pickMood(const [MostroMood.celebrating, MostroMood.asleep]),
+        MostroMood.celebrating,
+      );
+      expect(pickMood(const [MostroMood.impatient]), MostroMood.impatient);
+    });
+
+    test('between equals, the newer one wins', () {
+      expect(
+        pickMood(const [MostroMood.escrowLocked, MostroMood.fiatSent]),
+        MostroMood.fiatSent,
+      );
+      expect(
+        pickMood(const [MostroMood.fiatSent, MostroMood.escrowLocked]),
+        MostroMood.escrowLocked,
+      );
+    });
+  });
+
+  group('moodForRating', () {
+    test('five stars is love, any other score a thank-you', () {
+      expect(moodForRating(5), MostroMood.loved);
+      for (final score in const [1, 2, 3, 4]) {
+        expect(moodForRating(score), MostroMood.thankful, reason: '$score');
+      }
+    });
+  });
+
+  group('isFreshEvent', () {
+    final now = DateTime.utc(2026, 6, 1, 12);
+
+    test('something that just happened is news', () {
+      expect(isFreshEvent(occurredAt: now, now: now), isTrue);
+      expect(
+        isFreshEvent(
+          occurredAt: now.subtract(const Duration(seconds: 30)),
+          now: now,
+        ),
+        isTrue,
+      );
+    });
+
+    test('a relay slow by up to two minutes still counts', () {
+      expect(
+        isFreshEvent(occurredAt: now.subtract(mostroFreshEvent), now: now),
+        isTrue,
+      );
+    });
+
+    test('a replayed past is not news', () {
+      expect(
+        isFreshEvent(
+          occurredAt: now.subtract(const Duration(minutes: 3)),
+          now: now,
+        ),
+        isFalse,
+      );
+      expect(
+        isFreshEvent(
+          occurredAt: now.subtract(const Duration(days: 40)),
+          now: now,
+        ),
+        isFalse,
+      );
+    });
+
+    test('a sender clock a little ahead of ours is still news', () {
+      expect(
+        isFreshEvent(
+          occurredAt: now.add(const Duration(seconds: 20)),
+          now: now,
+        ),
+        isTrue,
+      );
+    });
   });
 }

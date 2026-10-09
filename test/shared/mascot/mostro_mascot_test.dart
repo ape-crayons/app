@@ -1,5 +1,6 @@
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mostro/core/app_theme.dart';
 import 'package:mostro/l10n/app_localizations.dart';
@@ -270,6 +271,38 @@ void main() {
       });
     });
 
+    testWidgets('pads the small header artwork out to a 48 dp target', (
+      tester,
+    ) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(
+          tester,
+          const MostroMascot(height: 26, interactive: true),
+        );
+        final mascot = find.byType(MostroMascot);
+        expect(tester.getSize(mascot), const Size.square(48));
+
+        // Beside the 18-dp-wide artwork, still inside the target (DS-CMP-6).
+        await tester.tapAt(tester.getCenter(mascot) + const Offset(20, 0));
+        await tester.pump(const Duration(milliseconds: 200));
+
+        expect(_isMoving(tester), isTrue);
+      });
+    });
+
+    testWidgets('takes only the artwork\'s room when nothing is to tap', (
+      tester,
+    ) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(tester, const MostroMascot(height: 26));
+
+        expect(
+          tester.getSize(find.byType(MostroMascot)),
+          const Size(26 * MostroMascot.aspect, 26),
+        );
+      });
+    });
+
     testWidgets('keeps the sleeping Z out of it too', (tester) async {
       await withClock(Clock.fixed(_plainDay), () async {
         final semantics = tester.ensureSemantics();
@@ -360,6 +393,100 @@ void main() {
         // which the viewer caused, does not.
         expect(_glyphOpacities(tester, '✨'), everyElement(0));
       });
+    });
+  });
+
+  group('artwork', () {
+    /// The asset the mascot is drawn from right now.
+    String artwork(WidgetTester tester) {
+      final image = tester.widget<Image>(
+        find.descendant(
+          of: find.byType(MostroMascot),
+          matching: find.byType(Image),
+        ),
+      );
+      return (image.image as AssetImage).assetName;
+    }
+
+    testWidgets('at rest it is the plain mascot', (tester) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(tester, const MostroMascot(height: 26));
+
+        expect(artwork(tester), MostroMascot.asset);
+      });
+    });
+
+    testWidgets('each ambient mood wears its sticker', (tester) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        for (final mood in [
+          MostroMood.asleep,
+          MostroMood.impatient,
+          MostroMood.celebrating,
+        ]) {
+          await _pump(tester, MostroMascot(height: 26, mood: mood));
+
+          expect(
+            artwork(tester),
+            MostroMascot.stickerAsset(moodSticker(mood)!),
+            reason: mood.name,
+          );
+        }
+      });
+    });
+
+    testWidgets('a tap waves, then rests again', (tester) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(tester, const MostroMascot(height: 26, interactive: true));
+
+        await _tap(tester);
+        expect(artwork(tester), MostroMascot.stickerAsset('waving'));
+
+        await tester.pumpAndSettle();
+        expect(artwork(tester), MostroMascot.asset);
+      });
+    });
+
+    testWidgets('a sticker takes the same room as the plain mascot', (
+      tester,
+    ) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(tester, const MostroMascot(height: 26));
+        final atRest = tester.getSize(find.byType(MostroMascot));
+
+        await _pump(
+          tester,
+          const MostroMascot(height: 26, mood: MostroMood.celebrating),
+        );
+
+        expect(tester.getSize(find.byType(MostroMascot)), atRest);
+      });
+    });
+
+    testWidgets('with reduce motion it keeps the sticker, standing still', (
+      tester,
+    ) async {
+      await withClock(Clock.fixed(_plainDay), () async {
+        await _pump(
+          tester,
+          const MostroMascot(height: 64, mood: MostroMood.asleep),
+          reduceMotion: true,
+        );
+
+        // The loop never starts, so the frame settles, sticker on.
+        await tester.pumpAndSettle();
+
+        expect(artwork(tester), MostroMascot.stickerAsset('bored'));
+      });
+    });
+
+    testWidgets('every sticker a mood names is bundled', (tester) async {
+      for (final mood in MostroMood.values) {
+        final sticker = moodSticker(mood);
+        if (sticker == null) continue;
+        final asset = MostroMascot.stickerAsset(sticker);
+        final data = await tester.runAsync(() => rootBundle.load(asset));
+        expect(data!.lengthInBytes, greaterThan(0), reason: asset);
+      }
     });
   });
 }

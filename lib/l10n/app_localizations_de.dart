@@ -4082,6 +4082,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cashuReceiveHint => 'Cashu-Token einfügen oder scannen';
 
   @override
+  String get cashuReceiveTitle => 'Token empfangen';
+
+  @override
+  String get cashuTokenFieldLabel => 'Cashu-Token';
+
+  @override
+  String get cashuPasteTokenHint => 'Cashu-Token einfügen';
+
+  @override
+  String get qrScanUnavailable => 'Auf diesem Gerät nicht verfügbar';
+
+  @override
   String get cashuAmountLabel => 'Betrag in Sats';
 
   @override
@@ -4350,4 +4362,33 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsMintCopied => 'Mint-URL kopiert';
+
+  @override
+  String get pwaInstallTitle => 'Mostro installieren';
+
+  @override
+  String get pwaInstallBody =>
+      'Öffne sie vom Home-Bildschirm aus, im Vollbild, wie jede andere App.';
+
+  @override
+  String get pwaInstallAction => 'Installieren';
+
+  @override
+  String get pwaInstallNotNow => 'Nicht jetzt';
+
+  @override
+  String get pwaInstallSettingTitle => 'App installieren';
+
+  @override
+  String get pwaInstallStepsTitle => 'Mostro zum Home-Bildschirm hinzufügen';
+
+  @override
+  String get pwaInstallStepShare =>
+      'Tippe in der Leiste deines Browsers auf „Teilen“.';
+
+  @override
+  String get pwaInstallStepAdd => 'Wähle „Zum Home-Bildschirm“.';
+
+  @override
+  String get pwaInstallStepsDone => 'Verstanden';
 }

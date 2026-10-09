@@ -1238,6 +1238,10 @@
   "cashuReceiveButton": "Ontvangen",
   "cashuSendButton": "Versturen",
   "cashuReceiveHint": "Plak of scan een Cashu-token",
+  "cashuReceiveTitle": "Token ontvangen",
+  "cashuTokenFieldLabel": "Cashu-token",
+  "cashuPasteTokenHint": "Plak een Cashu-token",
+  "qrScanUnavailable": "Niet beschikbaar op dit apparaat",
   "cashuAmountLabel": "Bedrag in sats",
   "cashuReceived": "{sats} sats ontvangen",
   "cashuSyncButton": "Synchroniseren met mint",
@@ -1310,5 +1314,14 @@
   "drawerHelpMenuItem": "Hulp nodig?",
   "cashuAnyMint": "Elke mint",
   "settingsMintLabel": "Mint",
-  "settingsMintCopied": "Mint-URL gekopieerd"
+  "settingsMintCopied": "Mint-URL gekopieerd",
+  "pwaInstallTitle": "Mostro installeren",
+  "pwaInstallBody": "Open hem vanaf je beginscherm, schermvullend, zoals elke andere app.",
+  "pwaInstallAction": "Installeren",
+  "pwaInstallNotNow": "Niet nu",
+  "pwaInstallSettingTitle": "App installeren",
+  "pwaInstallStepsTitle": "Zet Mostro op je beginscherm",
+  "pwaInstallStepShare": "Tik op de deelknop in de balk van je browser.",
+  "pwaInstallStepAdd": "Kies ‘Zet op beginscherm’.",
+  "pwaInstallStepsDone": "Begrepen"
 }

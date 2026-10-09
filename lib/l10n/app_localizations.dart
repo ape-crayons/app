@@ -6742,6 +6742,30 @@ abstract class AppLocalizations {
   /// **'Paste or scan a Cashu token'**
   String get cashuReceiveHint;
 
+  /// Cashu wallet — title of the Receive dialog, which takes the token by pasting or scanning
+  ///
+  /// In en, this message translates to:
+  /// **'Receive a token'**
+  String get cashuReceiveTitle;
+
+  /// Cashu wallet — label above the token field in the Receive dialog; shown in capitals
+  ///
+  /// In en, this message translates to:
+  /// **'Cashu token'**
+  String get cashuTokenFieldLabel;
+
+  /// Cashu wallet — dimmed placeholder of the token field; disappears once something is pasted or typed
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a Cashu token'**
+  String get cashuPasteTokenHint;
+
+  /// Tooltip of a disabled Scan QR action (NWC wallet, Cashu wallet) where the device has no usable camera (desktop, web)
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device'**
+  String get qrScanUnavailable;
+
   /// Cashu wallet — amount field when exporting a token
   ///
   /// In en, this message translates to:
@@ -7179,6 +7203,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mint URL copied'**
   String get settingsMintCopied;
+
+  /// Title of the card on the order book (web, mobile) that offers to install the app to the home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Install Mostro'**
+  String get pwaInstallTitle;
+
+  /// Body of the install card: what installing gives the user
+  ///
+  /// In en, this message translates to:
+  /// **'Open it from your home screen, full screen, like any other app.'**
+  String get pwaInstallBody;
+
+  /// Install card action: installs the app (Android) or shows how to (iOS)
+  ///
+  /// In en, this message translates to:
+  /// **'Install'**
+  String get pwaInstallAction;
+
+  /// Install card way out: hides the card for good on this device
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get pwaInstallNotNow;
+
+  /// Settings row (web only) that installs the app, for whoever dismissed the card
+  ///
+  /// In en, this message translates to:
+  /// **'Install app'**
+  String get pwaInstallSettingTitle;
+
+  /// Title of the sheet that explains how to add the app to the iOS home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Add Mostro to your home screen'**
+  String get pwaInstallStepsTitle;
+
+  /// Step 1 on iOS: the Share button of Safari or of the browser
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the Share button in your browser\'s toolbar.'**
+  String get pwaInstallStepShare;
+
+  /// Step 2 on iOS: the Share menu entry, named as iOS names it in this language
+  ///
+  /// In en, this message translates to:
+  /// **'Choose “Add to Home Screen”.'**
+  String get pwaInstallStepAdd;
+
+  /// Closes the iOS install steps sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get pwaInstallStepsDone;
 }
 
 class _AppLocalizationsDelegate
