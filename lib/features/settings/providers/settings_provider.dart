@@ -197,5 +197,8 @@ String _normalizeLanguage(String? stored) {
 /// display and the language picker always agree.
 final localeProvider = Provider<Locale>((ref) {
   final language = ref.watch(settingsProvider.select((s) => s.language));
+  // Para español, forzamos es-MX (México) para que los NumberFormat usen
+  // el formato mexicano 1,000.00 en lugar del español de España 1.000,00.
+  if (language == 'es') return const Locale('es', 'MX');
   return Locale(language);
 });

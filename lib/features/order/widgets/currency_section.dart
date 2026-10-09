@@ -10,6 +10,7 @@ import 'package:mostro/features/order/models/create_order_rules.dart';
 import 'package:mostro/features/settings/providers/node_stats_provider.dart';
 import 'package:mostro/l10n/app_localizations.dart';
 import 'package:mostro/shared/utils/fiat_currencies.dart';
+import 'package:mostro/shared/widgets/mostro_modal.dart';
 
 /// The picker's boxed search field (DS-CMP-11).
 const _kSearchFieldRadius = 14.0;

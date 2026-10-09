@@ -23,6 +23,7 @@ import 'package:mostro/features/order/widgets/currency_section.dart';
 import 'package:mostro/features/order/widgets/order_preview_bar.dart';
 import 'package:mostro/features/order/widgets/payment_method_section.dart';
 import 'package:mostro/features/order/widgets/price_section.dart';
+import 'package:mostro/features/settings/providers/settings_provider.dart';
 import 'package:mostro/features/trades/providers/trades_providers.dart'
     show refreshTrades;
 import 'package:mostro/l10n/app_localizations.dart';
