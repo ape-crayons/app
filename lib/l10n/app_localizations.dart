@@ -1174,11 +1174,29 @@ abstract class AppLocalizations {
   /// **'Not responding'**
   String get nodeStatusUnreachableNoSignal;
 
-  /// Two-line operator disclaimer at the foot of the node selector
+  /// First-run node choice, under the title: what the screen asks (v1 mostroNodeDescription)
   ///
   /// In en, this message translates to:
-  /// **'Each node is run by an independent third party. Mostro is not responsible for their conduct or for your trades.'**
-  String get nodeDisclaimerShort;
+  /// **'Select the Mostro node you want to trade on'**
+  String get nodeChoiceSubtitle;
+
+  /// First-run node choice: the full operator disclaimer of v1 (communityDisclaimerBody), in a warning note
+  ///
+  /// In en, this message translates to:
+  /// **'The Mostro development team is not responsible for how node operators use the platform. Each operator controls their own Mostro node and is solely responsible for their actions. By using Mostro, you accept full responsibility for your trades and acknowledge that the development team has no control over individual node operators.'**
+  String get nodeOperatorDisclaimer;
+
+  /// First-run node choice: primary button, enabled once a node card is picked
+  ///
+  /// In en, this message translates to:
+  /// **'Use this node'**
+  String get nodeChoiceConfirm;
+
+  /// First-run node choice: snackbar when the choice could not be saved on the device; both actions stay available
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your choice. Try again.'**
+  String get nodeChoiceSaveFailed;
 
   /// Warning box in the add-own-node dialog
   ///
@@ -3910,10 +3928,10 @@ abstract class AppLocalizations {
   /// **'No chat yet: until the trade is active, neither party knows who the other is.'**
   String get tradeChatLockedNote;
 
-  /// Subtitle of the chat card under the counterpart alias
+  /// Second line of the trade screen's chat card under the role title
   ///
   /// In en, this message translates to:
-  /// **'End-to-end encrypted chat'**
+  /// **'End-to-end encrypted'**
   String get tradeChatEncrypted;
 
   /// Subtitle of the trade screen's chat card once the conversation has ended (trade cancelled, or completed more than an hour ago); tapping opens the conversation read-only
@@ -3921,6 +3939,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Conversation closed · view messages'**
   String get tradeChatClosed;
+
+  /// Title of the trade screen's chat card when the counterpart is the buyer (the user sells)
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with the buyer'**
+  String get tradeChatWithBuyer;
+
+  /// Title of the trade screen's chat card when the counterpart is the seller (the user buys)
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with the seller'**
+  String get tradeChatWithSeller;
+
+  /// Title of the trade screen's chat card while the counterpart's role is not known yet
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with your counterpart'**
+  String get tradeChatWithCounterpart;
+
+  /// Second line of the trade screen's chat card while it has unread messages; count is the number of unread messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new message} other{{count} new messages}}'**
+  String tradeChatNewMessages(int count);
+
+  /// Trailing action label of the trade screen's chat card; tapping the card opens the conversation
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get tradeChatOpen;
 
   /// Screen-reader announcement when the trade screen's chat card turns closed while the user is on it (the completed trade's hour ran out); the messages stay readable
   ///
@@ -4690,17 +4738,41 @@ abstract class AppLocalizations {
   /// **'Fee'**
   String get aboutFeeCell;
 
-  /// About screen — node fee figure; value is the locale-formatted percentage number
+  /// About screen — node fee figure; value is the locale-formatted percentage number. Keep the non-breaking space (U+00A0) wherever the locale puts a space before the unit, so a line never splits the figure from it
   ///
   /// In en, this message translates to:
   /// **'{value}%'**
   String aboutFeeValue(String value);
 
-  /// About screen redesign (12a/12b)
+  /// Value of the deposit row on the About screen's connected node card when the node asks for no anti-abuse deposit (disabled, or a node that predates deposits)
   ///
   /// In en, this message translates to:
-  /// **'Limits in satoshis per order'**
-  String get aboutLimitsFootnote;
+  /// **'No'**
+  String get aboutNodeDepositNone;
+
+  /// Under the deposit share on the About screen's connected node card: the least the node locks whatever the order's amount (bond_base_amount_sats). amount is the locale-formatted number of sats
+  ///
+  /// In en, this message translates to:
+  /// **'min. {amount} sats'**
+  String aboutNodeDepositFloor(String amount);
+
+  /// Cell label on the About screen's connected node card: the anti-abuse deposit the node asks for (glossary term)
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
+  String get aboutDepositCell;
+
+  /// Cell label on the About screen's connected node card: the fiat currencies the node accepts
+  ///
+  /// In en, this message translates to:
+  /// **'Currencies'**
+  String get aboutCurrenciesCell;
+
+  /// Cell label on the About screen's connected node card: how long an order stays published before it expires
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get aboutOrderExpiryCell;
 
   /// About screen redesign (12a/12b)
   ///
@@ -4738,10 +4810,10 @@ abstract class AppLocalizations {
   /// **'Waiting timeout'**
   String get aboutWaitingTimeoutLabel;
 
-  /// About screen — a duration in hours, abbreviated
+  /// About screen — a duration in hours, abbreviated. Keep the non-breaking space (U+00A0) between the number and the unit, so a line never splits them
   ///
   /// In en, this message translates to:
-  /// **'{count} h'**
+  /// **'{count} h'**
   String aboutHoursShort(int count);
 
   /// About screen — a duration in seconds, abbreviated
@@ -7257,6 +7329,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get pwaInstallStepsDone;
+
+  /// Title of the Account card showing the user's own reputation on the active node
+  ///
+  /// In en, this message translates to:
+  /// **'Your reputation'**
+  String get myReputationTitle;
+
+  /// Number of ratings the user has received, on their own reputation card
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 rating} other{{count} ratings}}'**
+  String myReputationReviews(int count);
+
+  /// Date of the user's first trade on their reputation card; date is a localized month and year
+  ///
+  /// In en, this message translates to:
+  /// **'since {date}'**
+  String myReputationSince(String date);
+
+  /// Own reputation card when the node has no ratings for the user
+  ///
+  /// In en, this message translates to:
+  /// **'No ratings yet. Your reputation starts with your first rated trade.'**
+  String get myReputationNoReviews;
+
+  /// Own reputation card in full privacy mode, where no reputation exists
+  ///
+  /// In en, this message translates to:
+  /// **'Full privacy mode keeps no reputation. Choose reputation mode below to build one.'**
+  String get myReputationPrivacyMode;
+
+  /// Own reputation card while the node is asked and nothing is cached
+  ///
+  /// In en, this message translates to:
+  /// **'Asking your node…'**
+  String get myReputationLoading;
+
+  /// Own reputation card when the node has never answered
+  ///
+  /// In en, this message translates to:
+  /// **'Your node has not answered yet.'**
+  String get myReputationUnavailable;
+
+  /// Names the node the reputation belongs to
+  ///
+  /// In en, this message translates to:
+  /// **'On {node}'**
+  String myReputationOnNode(String node);
 }
 
 class _AppLocalizationsDelegate

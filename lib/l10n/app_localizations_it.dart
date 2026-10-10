@@ -634,8 +634,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get nodeStatusUnreachableNoSignal => 'Non risponde';
 
   @override
-  String get nodeDisclaimerShort =>
-      'Ogni nodo è gestito da un terzo indipendente. Mostro non risponde della sua condotta né delle tue operazioni.';
+  String get nodeChoiceSubtitle =>
+      'Seleziona il nodo Mostro su cui vuoi operare';
+
+  @override
+  String get nodeOperatorDisclaimer =>
+      'Il team di sviluppo di Mostro non è responsabile di come gli operatori dei nodi utilizzano la piattaforma. Ogni operatore controlla il proprio nodo Mostro ed è l\'unico responsabile delle proprie azioni. Utilizzando Mostro, accetti la piena responsabilità per le tue operazioni e riconosci che il team di sviluppo non ha alcun controllo sui singoli operatori dei nodi.';
+
+  @override
+  String get nodeChoiceConfirm => 'Usa questo nodo';
+
+  @override
+  String get nodeChoiceSaveFailed =>
+      'Impossibile salvare la tua scelta. Riprova.';
 
   @override
   String get nodeVerifyKeyWarning =>
@@ -2278,10 +2289,33 @@ class AppLocalizationsIt extends AppLocalizations {
       'Ancora nessuna chat: finché l\'operazione non è attiva, nessuna delle due parti sa chi è l\'altra.';
 
   @override
-  String get tradeChatEncrypted => 'Chat cifrata end-to-end';
+  String get tradeChatEncrypted => 'Cifrata end-to-end';
 
   @override
   String get tradeChatClosed => 'Conversazione chiusa · vedi i messaggi';
+
+  @override
+  String get tradeChatWithBuyer => 'Chatta con l\'acquirente';
+
+  @override
+  String get tradeChatWithSeller => 'Chatta con il venditore';
+
+  @override
+  String get tradeChatWithCounterpart => 'Chatta con la controparte';
+
+  @override
+  String tradeChatNewMessages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nuovi messaggi',
+      one: '1 nuovo messaggio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tradeChatOpen => 'Apri';
 
   @override
   String get tradeChatClosedAnnouncement =>
@@ -2780,7 +2814,21 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get aboutLimitsFootnote => 'Limiti in satoshi per ordine';
+  String get aboutNodeDepositNone => 'No';
+
+  @override
+  String aboutNodeDepositFloor(String amount) {
+    return 'min. $amount sats';
+  }
+
+  @override
+  String get aboutDepositCell => 'Deposito';
+
+  @override
+  String get aboutCurrenciesCell => 'Valute';
+
+  @override
+  String get aboutOrderExpiryCell => 'Scadenza';
 
   @override
   String get aboutNodeTechnicalDataRow => 'Dati tecnici del nodo';
@@ -2810,7 +2858,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String aboutHoursShort(int count) {
-    return '$count h';
+    return '$count h';
   }
 
   @override
@@ -4377,4 +4425,42 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get pwaInstallStepsDone => 'Ho capito';
+
+  @override
+  String get myReputationTitle => 'La tua reputazione';
+
+  @override
+  String myReputationReviews(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count valutazioni',
+      one: '1 valutazione',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String myReputationSince(String date) {
+    return 'dal $date';
+  }
+
+  @override
+  String get myReputationNoReviews =>
+      'Nessuna valutazione per ora. La tua reputazione inizia con il tuo primo scambio valutato.';
+
+  @override
+  String get myReputationPrivacyMode =>
+      'La modalità privacy totale non conserva alcuna reputazione. Scegli la modalità reputazione qui sotto per costruirne una.';
+
+  @override
+  String get myReputationLoading => 'Chiedo al tuo nodo…';
+
+  @override
+  String get myReputationUnavailable => 'Il tuo nodo non ha ancora risposto.';
+
+  @override
+  String myReputationOnNode(String node) {
+    return 'Su $node';
+  }
 }

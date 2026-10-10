@@ -179,7 +179,10 @@
   "nodeStatusNoUsefulOrders": "Nessun ordine nelle tue valute",
   "nodeStatusUnreachable": "Non risponde · ultimo segnale {ago}",
   "nodeStatusUnreachableNoSignal": "Non risponde",
-  "nodeDisclaimerShort": "Ogni nodo è gestito da un terzo indipendente. Mostro non risponde della sua condotta né delle tue operazioni.",
+  "nodeChoiceSubtitle": "Seleziona il nodo Mostro su cui vuoi operare",
+  "nodeOperatorDisclaimer": "Il team di sviluppo di Mostro non è responsabile di come gli operatori dei nodi utilizzano la piattaforma. Ogni operatore controlla il proprio nodo Mostro ed è l'unico responsabile delle proprie azioni. Utilizzando Mostro, accetti la piena responsabilità per le tue operazioni e riconosci che il team di sviluppo non ha alcun controllo sui singoli operatori dei nodi.",
+  "nodeChoiceConfirm": "Usa questo nodo",
+  "nodeChoiceSaveFailed": "Impossibile salvare la tua scelta. Riprova.",
   "nodeVerifyKeyWarning": "Verifica la chiave con l'operatore. Un nodo falso può vedere i tuoi ordini.",
   "nodeInvalidPubkeyShort": "Questa non è una chiave pubblica valida.",
   "nodeNameFieldHint": "Mostro locale",
@@ -653,11 +656,36 @@
   "@tradeChatLockedNote": {
     "description": "Line shown in place of the chat card until the trade is active"
   },
-  "tradeChatEncrypted": "Chat cifrata end-to-end",
+  "tradeChatEncrypted": "Cifrata end-to-end",
   "@tradeChatEncrypted": {
-    "description": "Subtitle of the chat card under the counterpart alias"
+    "description": "Second line of the trade screen's chat card under the role title"
   },
   "tradeChatClosed": "Conversazione chiusa · vedi i messaggi",
+  "tradeChatWithBuyer": "Chatta con l'acquirente",
+  "@tradeChatWithBuyer": {
+    "description": "Title of the trade screen's chat card when the counterpart is the buyer (the user sells)"
+  },
+  "tradeChatWithSeller": "Chatta con il venditore",
+  "@tradeChatWithSeller": {
+    "description": "Title of the trade screen's chat card when the counterpart is the seller (the user buys)"
+  },
+  "tradeChatWithCounterpart": "Chatta con la controparte",
+  "@tradeChatWithCounterpart": {
+    "description": "Title of the trade screen's chat card while the counterpart's role is not known yet"
+  },
+  "tradeChatNewMessages": "{count, plural, =1{1 nuovo messaggio} other{{count} nuovi messaggi}}",
+  "@tradeChatNewMessages": {
+    "description": "Second line of the trade screen's chat card while it has unread messages; count is the number of unread messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tradeChatOpen": "Apri",
+  "@tradeChatOpen": {
+    "description": "Trailing action label of the trade screen's chat card; tapping the card opens the conversation"
+  },
   "tradeChatClosedAnnouncement": "La conversazione è chiusa. Puoi ancora leggere i suoi messaggi",
   "tradeBodyWaitingPaymentBuyer": "Sta pagando la hold invoice. Quando i sats saranno bloccati, toccherà a te pagare il fiat.",
   "@tradeBodyWaitingPaymentBuyer": {
@@ -897,14 +925,18 @@
   "aboutMaxOrderCell": "Ordine massimo",
   "aboutFeeCell": "Commissione",
   "aboutFeeValue": "{value}%",
-  "aboutLimitsFootnote": "Limiti in satoshi per ordine",
+  "aboutNodeDepositNone": "No",
+  "aboutNodeDepositFloor": "min. {amount} sats",
+  "aboutDepositCell": "Deposito",
+  "aboutCurrenciesCell": "Valute",
+  "aboutOrderExpiryCell": "Scadenza",
   "aboutNodeTechnicalDataRow": "Dati tecnici del nodo",
   "aboutFieldCount": "{count, plural, =1{{count} campo} other{{count} campi}}",
   "aboutTechnicalDataTitle": "Dati tecnici",
   "aboutPublicKeyLabel": "Chiave pubblica",
   "aboutOrderExpiryLabel": "Scadenza ordine",
   "aboutWaitingTimeoutLabel": "Timeout di attesa",
-  "aboutHoursShort": "{count} h",
+  "aboutHoursShort": "{count}\u00A0h",
   "aboutSecondsShort": "{count} s",
   "aboutAliasLabel": "Alias",
   "aboutNodePublicKeyLabel": "Chiave pubblica del nodo",
@@ -1323,5 +1355,13 @@
   "pwaInstallStepsTitle": "Aggiungi Mostro alla schermata Home",
   "pwaInstallStepShare": "Tocca il pulsante Condividi nella barra del browser.",
   "pwaInstallStepAdd": "Scegli «Aggiungi a schermata Home».",
-  "pwaInstallStepsDone": "Ho capito"
+  "pwaInstallStepsDone": "Ho capito",
+  "myReputationTitle": "La tua reputazione",
+  "myReputationReviews": "{count, plural, =1{1 valutazione} other{{count} valutazioni}}",
+  "myReputationSince": "dal {date}",
+  "myReputationNoReviews": "Nessuna valutazione per ora. La tua reputazione inizia con il tuo primo scambio valutato.",
+  "myReputationPrivacyMode": "La modalità privacy totale non conserva alcuna reputazione. Scegli la modalità reputazione qui sotto per costruirne una.",
+  "myReputationLoading": "Chiedo al tuo nodo…",
+  "myReputationUnavailable": "Il tuo nodo non ha ancora risposto.",
+  "myReputationOnNode": "Su {node}"
 }

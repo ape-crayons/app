@@ -179,7 +179,10 @@
   "nodeStatusNoUsefulOrders": "Geen orders in jouw valuta",
   "nodeStatusUnreachable": "Reageert niet · laatst gezien {ago}",
   "nodeStatusUnreachableNoSignal": "Reageert niet",
-  "nodeDisclaimerShort": "Elke node wordt beheerd door een zelfstandige derde partij. Mostro is niet verantwoordelijk voor hun handelen of voor jouw trades.",
+  "nodeChoiceSubtitle": "Kies de Mostro-node waarop je wilt handelen",
+  "nodeOperatorDisclaimer": "Het ontwikkelteam van Mostro is niet verantwoordelijk voor wat node-beheerders met het platform doen. Elke beheerder bestuurt een eigen Mostro-node en is als enige verantwoordelijk voor wat daar gebeurt. Door Mostro te gebruiken neem je de volledige verantwoordelijkheid voor je eigen trades, en erken je dat het ontwikkelteam geen zeggenschap heeft over afzonderlijke node-beheerders.",
+  "nodeChoiceConfirm": "Deze node gebruiken",
+  "nodeChoiceSaveFailed": "Je keuze kon niet worden opgeslagen. Probeer het opnieuw.",
   "nodeVerifyKeyWarning": "Controleer de sleutel bij de beheerder. Een valse node kan je orders zien.",
   "nodeInvalidPubkeyShort": "Dit is geen geldige publieke sleutel.",
   "nodeNameFieldHint": "Lokale Mostro",
@@ -653,11 +656,36 @@
   "@tradeChatLockedNote": {
     "description": "Line shown in place of the chat card until the trade is active"
   },
-  "tradeChatEncrypted": "End-to-end versleutelde chat",
+  "tradeChatEncrypted": "End-to-end versleuteld",
   "@tradeChatEncrypted": {
-    "description": "Subtitle of the chat card under the counterpart alias"
+    "description": "Second line of the trade screen's chat card under the role title"
   },
   "tradeChatClosed": "Gesprek gesloten · berichten bekijken",
+  "tradeChatWithBuyer": "Chat met de koper",
+  "@tradeChatWithBuyer": {
+    "description": "Title of the trade screen's chat card when the counterpart is the buyer (the user sells)"
+  },
+  "tradeChatWithSeller": "Chat met de verkoper",
+  "@tradeChatWithSeller": {
+    "description": "Title of the trade screen's chat card when the counterpart is the seller (the user buys)"
+  },
+  "tradeChatWithCounterpart": "Chat met je tegenpartij",
+  "@tradeChatWithCounterpart": {
+    "description": "Title of the trade screen's chat card while the counterpart's role is not known yet"
+  },
+  "tradeChatNewMessages": "{count, plural, =1{1 nieuw bericht} other{{count} nieuwe berichten}}",
+  "@tradeChatNewMessages": {
+    "description": "Second line of the trade screen's chat card while it has unread messages; count is the number of unread messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tradeChatOpen": "Openen",
+  "@tradeChatOpen": {
+    "description": "Trailing action label of the trade screen's chat card; tapping the card opens the conversation"
+  },
   "tradeChatClosedAnnouncement": "Het gesprek is gesloten. Je kunt de berichten nog steeds lezen",
   "tradeBodyWaitingPaymentBuyer": "Hij betaalt de hold invoice. Zodra de sats vaststaan, is het aan jou om de fiat over te maken.",
   "@tradeBodyWaitingPaymentBuyer": {
@@ -897,14 +925,18 @@
   "aboutMaxOrderCell": "Max. order",
   "aboutFeeCell": "Kosten",
   "aboutFeeValue": "{value}%",
-  "aboutLimitsFootnote": "Grenzen in satoshi per order",
+  "aboutNodeDepositNone": "Nee",
+  "aboutNodeDepositFloor": "min. {amount} sats",
+  "aboutDepositCell": "Borg",
+  "aboutCurrenciesCell": "Valuta",
+  "aboutOrderExpiryCell": "Verloop",
   "aboutNodeTechnicalDataRow": "Technische gegevens van de node",
   "aboutFieldCount": "{count, plural, =1{{count} veld} other{{count} velden}}",
   "aboutTechnicalDataTitle": "Technische gegevens",
   "aboutPublicKeyLabel": "Publieke sleutel",
   "aboutOrderExpiryLabel": "Verlooptijd van een order",
   "aboutWaitingTimeoutLabel": "Tijdslimiet in de wachtstand",
-  "aboutHoursShort": "{count} u",
+  "aboutHoursShort": "{count}\u00A0u",
   "aboutSecondsShort": "{count} s",
   "aboutAliasLabel": "Naam",
   "aboutNodePublicKeyLabel": "Publieke sleutel van de node",
@@ -1323,5 +1355,13 @@
   "pwaInstallStepsTitle": "Zet Mostro op je beginscherm",
   "pwaInstallStepShare": "Tik op de deelknop in de balk van je browser.",
   "pwaInstallStepAdd": "Kies ‘Zet op beginscherm’.",
-  "pwaInstallStepsDone": "Begrepen"
+  "pwaInstallStepsDone": "Begrepen",
+  "myReputationTitle": "Jouw reputatie",
+  "myReputationReviews": "{count, plural, =1{1 beoordeling} other{{count} beoordelingen}}",
+  "myReputationSince": "sinds {date}",
+  "myReputationNoReviews": "Nog geen beoordelingen. Je reputatie begint bij je eerste beoordeelde ruil.",
+  "myReputationPrivacyMode": "De volledige privacymodus houdt geen reputatie bij. Kies hieronder de reputatiemodus om er een op te bouwen.",
+  "myReputationLoading": "Je node wordt gevraagd…",
+  "myReputationUnavailable": "Je node heeft nog niet geantwoord.",
+  "myReputationOnNode": "Op {node}"
 }

@@ -179,7 +179,10 @@
   "nodeStatusNoUsefulOrders": "Aucun ordre dans vos devises",
   "nodeStatusUnreachable": "Ne répond pas · dernier signal {ago}",
   "nodeStatusUnreachableNoSignal": "Ne répond pas",
-  "nodeDisclaimerShort": "Chaque nœud est exploité par un tiers indépendant. Mostro ne répond ni de sa conduite ni de vos opérations.",
+  "nodeChoiceSubtitle": "Sélectionnez le nœud Mostro sur lequel vous voulez échanger",
+  "nodeOperatorDisclaimer": "L'équipe de développement de Mostro n'est pas responsable de l'utilisation que font les opérateurs de nœuds de la plateforme. Chaque opérateur contrôle son propre nœud Mostro et est seul responsable de ses actions. En utilisant Mostro, vous acceptez l'entière responsabilité de vos transactions et reconnaissez que l'équipe de développement n'a aucun contrôle sur les opérateurs de nœuds individuels.",
+  "nodeChoiceConfirm": "Utiliser ce nœud",
+  "nodeChoiceSaveFailed": "Impossible d'enregistrer votre choix. Réessayez.",
   "nodeVerifyKeyWarning": "Vérifiez la clé auprès de l'opérateur. Un faux nœud peut voir vos ordres.",
   "nodeInvalidPubkeyShort": "Ce n'est pas une clé publique valide.",
   "nodeNameFieldHint": "Mostro local",
@@ -653,11 +656,36 @@
   "@tradeChatLockedNote": {
     "description": "Line shown in place of the chat card until the trade is active"
   },
-  "tradeChatEncrypted": "Chat chiffré de bout en bout",
+  "tradeChatEncrypted": "Chiffré de bout en bout",
   "@tradeChatEncrypted": {
-    "description": "Subtitle of the chat card under the counterpart alias"
+    "description": "Second line of the trade screen's chat card under the role title"
   },
   "tradeChatClosed": "Conversation fermée · voir les messages",
+  "tradeChatWithBuyer": "Discuter avec l'acheteur",
+  "@tradeChatWithBuyer": {
+    "description": "Title of the trade screen's chat card when the counterpart is the buyer (the user sells)"
+  },
+  "tradeChatWithSeller": "Discuter avec le vendeur",
+  "@tradeChatWithSeller": {
+    "description": "Title of the trade screen's chat card when the counterpart is the seller (the user buys)"
+  },
+  "tradeChatWithCounterpart": "Discuter avec votre contrepartie",
+  "@tradeChatWithCounterpart": {
+    "description": "Title of the trade screen's chat card while the counterpart's role is not known yet"
+  },
+  "tradeChatNewMessages": "{count, plural, =1{1 nouveau message} other{{count} nouveaux messages}}",
+  "@tradeChatNewMessages": {
+    "description": "Second line of the trade screen's chat card while it has unread messages; count is the number of unread messages",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tradeChatOpen": "Ouvrir",
+  "@tradeChatOpen": {
+    "description": "Trailing action label of the trade screen's chat card; tapping the card opens the conversation"
+  },
   "tradeChatClosedAnnouncement": "La conversation est fermée. Vous pouvez toujours lire ses messages",
   "tradeBodyWaitingPaymentBuyer": "Le vendeur paie la facture de dépôt. Une fois les sats bloqués, ce sera à vous de payer le fiat.",
   "@tradeBodyWaitingPaymentBuyer": {
@@ -896,15 +924,19 @@
   "aboutMinOrderCell": "Commande min.",
   "aboutMaxOrderCell": "Commande max.",
   "aboutFeeCell": "Frais",
-  "aboutFeeValue": "{value} %",
-  "aboutLimitsFootnote": "Limites en satoshis par commande",
+  "aboutFeeValue": "{value}\u00A0%",
+  "aboutNodeDepositNone": "Non",
+  "aboutNodeDepositFloor": "min. {amount} sats",
+  "aboutDepositCell": "Dépôt",
+  "aboutCurrenciesCell": "Devises",
+  "aboutOrderExpiryCell": "Expiration",
   "aboutNodeTechnicalDataRow": "Données techniques du nœud",
   "aboutFieldCount": "{count, plural, =1{{count} champ} other{{count} champs}}",
   "aboutTechnicalDataTitle": "Données techniques",
   "aboutPublicKeyLabel": "Clé publique",
   "aboutOrderExpiryLabel": "Expiration de commande",
   "aboutWaitingTimeoutLabel": "Délai d'attente",
-  "aboutHoursShort": "{count} h",
+  "aboutHoursShort": "{count}\u00A0h",
   "aboutSecondsShort": "{count} s",
   "aboutAliasLabel": "Alias",
   "aboutNodePublicKeyLabel": "Clé publique du nœud",
@@ -1323,5 +1355,13 @@
   "pwaInstallStepsTitle": "Ajoutez Mostro à votre écran d’accueil",
   "pwaInstallStepShare": "Appuyez sur le bouton Partager dans la barre de votre navigateur.",
   "pwaInstallStepAdd": "Choisissez « Sur l’écran d’accueil ».",
-  "pwaInstallStepsDone": "Compris"
+  "pwaInstallStepsDone": "Compris",
+  "myReputationTitle": "Votre réputation",
+  "myReputationReviews": "{count, plural, =1{1 note} other{{count} notes}}",
+  "myReputationSince": "depuis {date}",
+  "myReputationNoReviews": "Aucune note pour l'instant. Votre réputation commence avec votre premier échange noté.",
+  "myReputationPrivacyMode": "Le mode confidentialité totale ne conserve aucune réputation. Choisissez le mode réputation ci-dessous pour en bâtir une.",
+  "myReputationLoading": "Interrogation de votre nœud…",
+  "myReputationUnavailable": "Votre nœud n'a pas encore répondu.",
+  "myReputationOnNode": "Sur {node}"
 }
