@@ -19,38 +19,28 @@ class BondExplainerNotifier extends Notifier<bool> {
   BondExplainerNotifier({Future<SharedPreferences> Function()? prefs})
     : _prefs = prefs ?? SharedPreferences.getInstance;
 
+  // TODO(mx): temporal — `prefs` se recibe pero no se usa mientras el
+  // explicador no persiste. Revertir con el fix del upstream.
+  // ignore: unused_field
   final Future<SharedPreferences> Function() _prefs;
-
-  /// Set once the user changed the state: a stored value that lands later
-  /// must not undo that choice.
-  bool _touched = false;
 
   @override
   bool build() {
-    _touched = false;
     _load();
-    return true;
+    // TODO(mx): temporal mientras upstream arregla el default — el explicador
+    // del bond debe arrancar CERRADO en cada orden para mostrar el QR directo.
+    // Revertir cuando llegue el fix del upstream.
+    return false;
   }
 
   Future<void> _load() async {
-    try {
-      final prefs = await _prefs();
-      if (_touched) return;
-      state = bondExplainerOpens(stored: prefs.getBool(kBondExplainerOpenKey));
-    } catch (_) {
-      // No durable preference: the default stands.
-    }
+    // TODO(mx): temporal — sin persistencia entre órdenes.
+    state = false;
   }
 
   Future<void> set(bool open) async {
-    _touched = true;
+    // TODO(mx): temporal — sin persistencia, cada orden arranca cerrada.
     state = open;
-    try {
-      final prefs = await _prefs();
-      await prefs.setBool(kBondExplainerOpenKey, open);
-    } catch (_) {
-      // Remembered for this session at least.
-    }
   }
 
   Future<void> toggle() => set(!state);
