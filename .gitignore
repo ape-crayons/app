@@ -61,3 +61,4 @@ test/web/smoke/smoke-failure.png
 rust_builder/example/linux/flutter/generated_*
 rust_builder/example/macos/Flutter/Generated*
 rust_builder/example/windows/flutter/generated_*
+devtools_options.yaml
