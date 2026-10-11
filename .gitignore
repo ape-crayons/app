@@ -14,8 +14,6 @@ lib/l10n/untranslated_messages.txt
 # Rust
 rust/target/
 rust_builder/target/
-rust_builder/example/*/flutter/generated_*
-rust_builder/example/macos/Flutter/GeneratedPluginRegistrant.swift
 
 # NOTE: rust/Cargo.lock IS committed to freeze the mostro-core git dependency
 
