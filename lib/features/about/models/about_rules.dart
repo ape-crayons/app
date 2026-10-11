@@ -83,7 +83,7 @@ List<String> splitTagList(String? raw) => (raw ?? '')
     .toList(growable: false);
 
 String formatSats(int sats, String locale) =>
-    NumberFormat.decimalPattern(locale).format(sats);
+    NumberFormat.decimalPattern('es_MX').format(sats);
 
 /// A fraction the node sends (`0.006`) as `0.6%` in the locale's style, or
 /// `null` when the node sent nothing usable: its fee, its deposit and the

@@ -356,7 +356,7 @@ class _AddOrderScreenState extends ConsumerState<AddOrderScreen> {
       if (sats == null || sats <= BigInt.zero) return null;
       final satsText = markPreview(
         l10n.satsAmount(
-          NumberFormat.decimalPattern(locale).format(sats.toInt()),
+          NumberFormat.decimalPattern('es_MX').format(sats.toInt()),
         ),
         PreviewRole.sats,
       );

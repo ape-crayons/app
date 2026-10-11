@@ -21,7 +21,7 @@ import 'package:mostro/src/rust/api/types.dart'
 /// app (`2.439` in `es`, `2,439` in `en`), so an invoice screen reads like the
 /// order it belongs to (#720).
 String formatInvoiceSats(int sats, String locale) =>
-    NumberFormat.decimalPattern(locale).format(sats);
+    NumberFormat.decimalPattern('es_MX').format(sats);
 
 /// The Mostro fee a hold invoice of [holdSats] carries, given the node's fee
 /// as a fraction ([nodeFee], `0.006` = 0.6 %), or null when it cannot be
@@ -217,7 +217,7 @@ InvoiceCheck invoiceCheckFromVerdict(
 /// The whole sats and the remainder are formatted apart, in integer
 /// arithmetic: `msat / 1000` as a double would round an amount past 2^53.
 String formatInvoiceMsat(int msat, String locale) {
-  final format = NumberFormat.decimalPattern(locale);
+  final format = NumberFormat.decimalPattern('es_MX');
   final whole = format.format(msat ~/ 1000);
   final remainder = (msat % 1000).abs();
   if (remainder == 0) return whole;

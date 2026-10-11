@@ -171,13 +171,13 @@ List<String> currencyChips(List<String> accepted, String? myFiat) {
 String abbreviateSats(BigInt sats, String locale) {
   final n = sats.toDouble();
   final fmt =
-      NumberFormat.decimalPattern(locale)
+      NumberFormat.decimalPattern('es_MX')
         ..minimumFractionDigits = 0
         ..maximumFractionDigits = 1;
   if (n >= 1e9) return '${fmt.format(n / 1e9)}G';
   if (n >= 1e6) return '${fmt.format(n / 1e6)}M';
   if (n >= 1e3) return '${fmt.format(n / 1e3)}k';
-  return NumberFormat.decimalPattern(locale).format(sats.toInt());
+  return NumberFormat.decimalPattern('es_MX').format(sats.toInt());
 }
 
 /// `5k–2M`, or `null` when either bound is missing (the column shows `—`).

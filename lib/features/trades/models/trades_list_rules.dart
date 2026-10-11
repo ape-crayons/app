@@ -362,7 +362,7 @@ String formatFiatAmount({
 
 /// Whole sats with the locale's thousands separator: `6.900` in `es`.
 String formatSatsCount(int sats, String locale) =>
-    NumberFormat.decimalPattern(locale).format(sats);
+    NumberFormat.decimalPattern('es_MX').format(sats);
 
 /// `Vendes · 219.500 ARS · 163.069 sats`: the side, the fiat and, once
 /// known, the sats. [fiatAmount] wins over the range, so a range order taken
