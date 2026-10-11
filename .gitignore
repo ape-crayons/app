@@ -14,6 +14,9 @@ lib/l10n/untranslated_messages.txt
 # Rust
 rust/target/
 rust_builder/target/
+rust_builder/example/*/flutter/generated_*
+rust_builder/example/macos/Flutter/GeneratedPluginRegistrant.swift
+
 # NOTE: rust/Cargo.lock IS committed to freeze the mostro-core git dependency
 
 # General
@@ -23,6 +26,8 @@ rust_builder/target/
 .env
 .env.*
 *.iml
+.vscode/
+devtools_options.yaml
 
 # Signing keys. android/.gitignore already covers android/, but a keystore generated with
 # `keytool` from the repo root (docs/RELEASING.md) would land here, unignored. The release
