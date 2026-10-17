@@ -82,6 +82,28 @@ void main() {
       expect(peer.resolvedTitle(en), isNot(mine.resolvedTitle(en)));
     });
 
+    // #823: a new request for an invoice after a failed payout rides on the
+    // first request's status; the reason gives it its own card and copy.
+    test('a request after a failed payout says the payment failed', () {
+      final first = NotificationModel.tradeStatus(
+        orderId: 'order-1',
+        status: 'waitingBuyerInvoice',
+        at: at,
+      );
+      final again = NotificationModel.tradeStatus(
+        orderId: 'order-1',
+        status: 'waitingBuyerInvoice',
+        reason: 'payoutFailed',
+        at: at,
+      );
+
+      expect(again.id, isNot(first.id));
+      expect(again.resolvedTitle(en), en.tradeCardPayoutFailedTitle);
+      expect(again.resolvedMessage(en), en.tradeCardPayoutFailedMessage);
+      expect(again.resolvedTitle(es), es.tradeCardPayoutFailedTitle);
+      expect(first.resolvedTitle(en), en.tradeCardWaitingBuyerInvoiceTitle);
+    });
+
     test('a status this build does not know still renders', () {
       final n = NotificationModel.tradeStatus(
         orderId: 'order-1',
@@ -115,6 +137,31 @@ void main() {
       expect(restored.id, n.id);
       expect(restored.timestamp, at);
       expect(restored.resolvedTitle(en), en.tradeCardFiatSentTitle);
+    });
+
+    test('keeps the node of its trade through storage and a read (#811)', () {
+      final n = NotificationModel.tradeStatus(
+        orderId: 'order-1',
+        status: 'fiatSent',
+        at: at,
+        nodePubkey: 'aa11',
+      );
+
+      final restored = NotificationModel.fromJson(n.toJson());
+      expect(restored.nodePubkey, 'aa11');
+      expect(restored.copyWith(isRead: true).nodePubkey, 'aa11');
+    });
+
+    test('a card stored before nodes were recorded has none', () {
+      final json =
+          NotificationModel.tradeStatus(
+              orderId: 'order-1',
+              status: 'fiatSent',
+              at: at,
+            ).toJson()
+            ..remove('nodePubkey');
+
+      expect(NotificationModel.fromJson(json).nodePubkey, isNull);
     });
   });
 

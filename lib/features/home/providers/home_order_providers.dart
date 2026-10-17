@@ -28,7 +28,8 @@ enum OrderSort {
   newest,
 
   /// The premium most in the taker's favour first — see
-  /// [OrderItemTakerView.takerPremiumAdvantage].
+  /// [OrderItemTakerView.takerPremiumAdvantage]. Fixed-sats orders have no
+  /// premium, so they come after every market-price one.
   bestPremium,
 
   /// Highest maker rating first, then most trades.
@@ -49,12 +50,16 @@ Comparator<OrderItem> orderComparator(OrderSort sort) {
 
   return switch (sort) {
     OrderSort.newest => newestFirst,
-    OrderSort.bestPremium =>
-      (a, b) => thenNewest(
-        b.takerPremiumAdvantage.compareTo(a.takerPremiumAdvantage),
+    OrderSort.bestPremium => (a, b) {
+      if (a.hasFixedSats != b.hasFixedSats) return a.hasFixedSats ? 1 : -1;
+      return thenNewest(
+        a.hasFixedSats
+            ? 0
+            : b.takerPremiumAdvantage.compareTo(a.takerPremiumAdvantage),
         a,
         b,
-      ),
+      );
+    },
     OrderSort.bestReputation => (a, b) {
       final byRating = b.rating.compareTo(a.rating);
       return thenNewest(
@@ -79,7 +84,7 @@ class OrderItem {
     required this.fiatCode,
     required this.paymentMethod,
     required this.premium,
-    required this.creatorPubkey,
+    required this.nodePubkey,
     required this.createdAt,
     this.expiresAt,
     this.rating = 0.0,
@@ -110,7 +115,7 @@ class OrderItem {
   final String fiatCode;
   final String paymentMethod;
   final double premium;
-  final String creatorPubkey;
+  final String nodePubkey;
   final DateTime createdAt;
   final DateTime? expiresAt;
   final double rating;
@@ -186,7 +191,7 @@ class OrderItem {
           other.fiatCode == fiatCode &&
           other.paymentMethod == paymentMethod &&
           other.premium == premium &&
-          other.creatorPubkey == creatorPubkey &&
+          other.nodePubkey == nodePubkey &&
           other.createdAt == createdAt &&
           other.expiresAt == expiresAt &&
           other.rating == rating &&
@@ -207,7 +212,7 @@ class OrderItem {
     fiatCode,
     paymentMethod,
     premium,
-    creatorPubkey,
+    nodePubkey,
     createdAt,
     expiresAt,
     rating,
@@ -229,7 +234,7 @@ class OrderItem {
     fiatCode: info.fiatCode,
     paymentMethod: info.paymentMethod,
     premium: info.premium,
-    creatorPubkey: info.creatorPubkey,
+    nodePubkey: info.nodePubkey,
     createdAt: DateTime.fromMillisecondsSinceEpoch(
       platformInt64ToInt(info.createdAt) * 1000,
     ),
@@ -409,7 +414,8 @@ final filteredOrdersProvider = Provider.autoDispose<List<OrderItem>>((ref) {
         }
       }
 
-      if (premiumRange != defaultPremiumRange) {
+      // A fixed-sats order has no premium: its 0 is not a value to filter on.
+      if (premiumRange != defaultPremiumRange && !o.hasFixedSats) {
         if (o.premium < premiumRange.min || o.premium > premiumRange.max) {
           return false;
         }

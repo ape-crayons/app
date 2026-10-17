@@ -235,9 +235,10 @@ Future<void> _startup(
   try {
     await IdentityService.initialize();
   } catch (e, st) {
-    debugPrint(
-      '[main] Identity init failed — secure storage unavailable: $e\n$st',
-    );
+    // Not only secure storage: a first launch over a database that still
+    // holds a deleted identity's rows is refused (`PendingWipeFailed`) until
+    // the wipe can be retried from the Account screen (issue #555).
+    debugPrint('[main] Identity init failed: $e\n$st');
   }
 
   // Subscribe to bond-slashed notices BEFORE relay delivery starts, so the
@@ -350,6 +351,19 @@ Future<void> _startup(
     final claims = bondClaimStream;
     if (claims != null) _consumeBondClaims(claims, container);
 
+    // The first run that hears other nodes keeps its date for good: what
+    // they did before it is history, not news (#811).
+    final storedCutoff = prefs.getInt(kOtherNodeCardsSinceKey);
+    final otherNodeCardsSince =
+        storedCutoff != null
+            ? DateTime.fromMillisecondsSinceEpoch(storedCutoff)
+            : DateTime.now();
+    if (storedCutoff == null) {
+      await prefs.setInt(
+        kOtherNodeCardsSinceKey,
+        otherNodeCardsSince.millisecondsSinceEpoch,
+      );
+    }
     final eventCards = EventCards(
       notifications: () => container.read(notificationsProvider.notifier),
       // Read from disk, not the prefs provider: its first load is async, and
@@ -359,6 +373,12 @@ Future<void> _startup(
       currentLocation: _currentLocation,
       disputeIdForTrade:
           (tradeId) => container.read(disputeByTradeIdProvider(tradeId))?.id,
+      tradeNodeOf: (orderId) => orders_api.tradeNodeOf(orderId: orderId),
+      tradeExists:
+          (orderId) async =>
+              await orders_api.getTradeRole(orderId: orderId) != null,
+      activeNode: () => container.read(mostroPubkeyProvider),
+      otherNodeCardsSince: () => otherNodeCardsSince,
     );
     final trades = tradeUpdateStream;
     if (trades != null) {

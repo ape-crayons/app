@@ -32,6 +32,7 @@ class NotificationModel {
     this.orderId,
     this.disputeId,
     this.detail,
+    this.nodePubkey,
   });
 
   final String id;
@@ -45,6 +46,12 @@ class NotificationModel {
 
   /// Optional key-value pairs shown in the card detail section.
   final Map<String, String>? detail;
+
+  /// The node of the trade the card is about, recorded when it was raised
+  /// (#811): the row may be gone by the time the card is shown. Null on a
+  /// card raised before nodes were recorded, or for a trade whose node is
+  /// unknown — both read as the active node's.
+  final String? nodePubkey;
 
   NotificationModel copyWith({
     bool? isRead,
@@ -62,6 +69,7 @@ class NotificationModel {
       orderId: orderId,
       disputeId: disputeId,
       detail: detail ?? this.detail,
+      nodePubkey: nodePubkey,
     );
   }
 
@@ -76,6 +84,7 @@ class NotificationModel {
       'orderId': orderId,
       'disputeId': disputeId,
       'detail': detail,
+      'nodePubkey': nodePubkey,
     };
   }
 
@@ -95,6 +104,7 @@ class NotificationModel {
       detail: (json['detail'] as Map<String, dynamic>?)?.map(
         (k, v) => MapEntry(k, v as String),
       ),
+      nodePubkey: json['nodePubkey'] as String?,
     );
   }
 
@@ -232,6 +242,7 @@ class NotificationModel {
     required String status,
     String? reason,
     required DateTime at,
+    String? nodePubkey,
   }) {
     return NotificationModel(
       id: 'trade-$orderId-$status${reason == null ? '' : '-$reason'}',
@@ -244,6 +255,7 @@ class NotificationModel {
         _tradeStatusKey: status,
         if (reason != null) _tradeReasonKey: reason,
       },
+      nodePubkey: nodePubkey,
     );
   }
 
@@ -255,6 +267,7 @@ class NotificationModel {
     required bool fromSolver,
     required int count,
     required DateTime at,
+    String? nodePubkey,
   }) {
     return NotificationModel(
       id: chatCardId(tradeId, fromSolver: fromSolver),
@@ -264,6 +277,7 @@ class NotificationModel {
       timestamp: at,
       orderId: tradeId,
       detail: {_chatCountKey: '$count', if (fromSolver) _chatSolverKey: 'true'},
+      nodePubkey: nodePubkey,
     );
   }
 
@@ -372,8 +386,13 @@ class NotificationModel {
         _ => null,
       };
 
+  /// The node asks for a new invoice because it could not pay the one it
+  /// had (#823): the status of a first request, told apart by the reason.
+  bool get _payoutFailed => detail?[_tradeReasonKey] == 'payoutFailed';
+
   String _tradeTitle(AppLocalizations l10n) =>
       _cancelRequestTitle(l10n) ??
+      (_payoutFailed ? l10n.tradeCardPayoutFailedTitle : null) ??
       switch (detail?[_tradeStatusKey]) {
         'waitingBuyerInvoice' => l10n.tradeCardWaitingBuyerInvoiceTitle,
         'waitingPayment' => l10n.tradeCardWaitingPaymentTitle,
@@ -394,6 +413,7 @@ class NotificationModel {
 
   String _tradeMessage(AppLocalizations l10n) =>
       _cancelRequestMessage(l10n) ??
+      (_payoutFailed ? l10n.tradeCardPayoutFailedMessage : null) ??
       switch (detail?[_tradeStatusKey]) {
         'waitingBuyerInvoice' => l10n.tradeCardWaitingBuyerInvoiceMessage,
         'waitingPayment' => l10n.tradeCardWaitingPaymentMessage,

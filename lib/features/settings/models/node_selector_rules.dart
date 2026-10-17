@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+import 'package:mostro/shared/utils/abbreviated_figure.dart';
 import 'package:mostro/src/rust/api/node_stats.dart';
 import 'package:mostro/src/rust/api/types.dart';
 
@@ -168,17 +169,10 @@ List<String> currencyChips(List<String> accepted, String? myFiat) {
 
 /// `5000` → `5k`, `2000000` → `2M`, `1500` → `1.5k` (locale separator),
 /// `950` → `950`.
-String abbreviateSats(BigInt sats, String locale) {
-  final n = sats.toDouble();
-  final fmt =
-      NumberFormat.decimalPattern('es_MX')
-        ..minimumFractionDigits = 0
-        ..maximumFractionDigits = 1;
-  if (n >= 1e9) return '${fmt.format(n / 1e9)}G';
-  if (n >= 1e6) return '${fmt.format(n / 1e6)}M';
-  if (n >= 1e3) return '${fmt.format(n / 1e3)}k';
-  return NumberFormat.decimalPattern('es_MX').format(sats.toInt());
-}
+// The `locale` parameter is kept for API compatibility but ignored: sats
+// are always formatted with Mexican separators in this fork (#mx).
+String abbreviateSats(BigInt sats, String locale) =>
+    abbreviateFigure(sats.toInt(), 'es_MX', billions: 'G');
 
 /// `5k–2M`, or `null` when either bound is missing (the column shows `—`).
 String? satsRange(BigInt? min, BigInt? max, String locale) {

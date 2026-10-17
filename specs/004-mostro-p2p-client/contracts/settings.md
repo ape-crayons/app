@@ -67,7 +67,10 @@ Set the default fiat currency for new orders. Pass null to clear
 Set a default Lightning Address to auto-fill when selling (buyer
 submits invoice). Pass null to clear.
 
-**Validation**: If non-null, MUST match `user@domain` format.
+**Validation**: If non-null, MUST be a Lightning address by the rule a take
+applies (`invoice::classify`, LUD-16 `user@domain.tld`): one Settings saves
+but a take refuses would fail every buy from the take screen. Saved without
+surrounding whitespace or a `lightning:` prefix.
 
 **Errors**: `InvalidLightningAddress`, `StorageError`.
 
@@ -169,7 +172,8 @@ mode), `latest_order_at`, `fee_pct` (the wire `fee` fraction × 100),
 (Cashu only), `bond_required` (`bond_enabled`; `None` on a daemon without
 bonds), `bond_pct` (only when required), `orders_by_fiat` and `total_orders`.
 Orders are counted by the app — never declared by the node — keeping only the
-newest version per (`author`, `d`), `pending`, and not past `expiration`.
+newest version per (`author`, `d`), `pending`, and not past its take window
+(`expires_at`, see `OrderInfo` in `data-model.md`).
 Best-effort like `refresh_mostro_node_metadata`: a node that answered nothing
 is an empty row (the UI shows it as unreachable), never a missing one. The
 kind 38385 events it received refresh the node info cache (below), best effort
@@ -236,14 +240,16 @@ before the user adds or removes anything.
 | URL | Purpose |
 |-----|---------|
 | `wss://relay.mostro.network` | Primary Mostro relay |
-| `wss://nos.lol` | General Nostr relay (fallback) |
 | `wss://mostro-p2p.tech` | Mostro relay (default node's kind 10002 list) |
 | `wss://relay.shadowbip.com` | Mostro relay (default node's kind 10002 list) |
 
-The set mirrors the default node's own kind 10002 relay list. Public relays
-rate-limit and cap replays differently (`relay.mostro.network` stops at 300
-stored events per REQ, `nos.lol` at 500), so seeding all four keeps the order
-book reachable when one of them is throttling the client.
+The set mirrors the default node's own kind 10002 relay list, and a test in
+`rust/src/config.rs` pins it. Public relays rate-limit and cap replays
+differently (`relay.mostro.network` stops at 300 stored events per REQ), so
+seeding all three keeps the order book reachable when one of them is
+throttling the client. `wss://nos.lol` was removed once the node stopped
+publishing there: it only served stale events and caps concurrent REQs per
+connection.
 
 These are stored as `RelayInfo` entries with `user_added: false`. They cannot be
 removed by the user from the UI (only user-added relays are deletable), but they
@@ -266,7 +272,6 @@ Settings → Mostro Node via `set_active_mostro_node`.
 ```rust
 pub const DEFAULT_RELAYS: &[&str] = &[
     "wss://relay.mostro.network",
-    "wss://nos.lol",
     "wss://mostro-p2p.tech",
     "wss://relay.shadowbip.com",
 ];
