@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,18 +20,19 @@ import 'package:mostro/features/order/widgets/explanatory_note.dart';
 import 'package:mostro/features/order/widgets/invoice_clock.dart';
 import 'package:mostro/features/order/widgets/invoice_widgets.dart';
 import 'package:mostro/features/order/widgets/order_detail_cards.dart';
+import 'package:mostro/features/order/widgets/order_node_qr.dart';
 import 'package:mostro/features/settings/providers/nwc_provider.dart';
 import 'package:mostro/features/trades/providers/trades_providers.dart'
     show refreshTrades, tradeInfoProvider;
 import 'package:mostro/l10n/app_localizations.dart';
 import 'package:mostro/shared/mascot/mascot_cues.dart';
 import 'package:mostro/shared/utils/reputation_age.dart';
+import 'package:mostro/shared/widgets/counterpart_reputation_row.dart';
 import 'package:mostro/shared/widgets/mostro_modal.dart';
 import 'package:mostro/src/rust/api/orders.dart' as orders_api;
 import 'package:mostro/src/rust/api/types.dart'
     show OrderStatus, TradeInfo, TradeUpdate;
 import 'package:mostro/shared/widgets/nwc_payment_widget.dart';
-import 'package:mostro/shared/widgets/peer_reputation_card.dart';
 
 /// 13b · Lock your sats — Route `/pay_invoice/:orderId`.
 ///
@@ -354,10 +354,10 @@ class _PayLightningInvoiceScreenState
                     // auto-pays the hold invoice — the app can settle without a
                     // manual step, so this is where the decision matters (#305).
                     if (peerTrade?.peerRating != null) ...[
-                      PeerReputationCard(
+                      CounterpartReputationRow(
                         rating: peerTrade!.peerRating!,
                         reviews: peerTrade.peerReviews ?? 0,
-                        days: peerTrade.peerDaysOnMostro,
+                        since: peerTrade.peerFirstTrade,
                         counterpartIsBuyer: true,
                       ),
                       const SizedBox(height: AppSpacing.lg),
@@ -462,7 +462,7 @@ class _PayLightningInvoiceScreenState
                       // the settlement against.
                       automationId: AutomationIds.payInvoiceText,
                       automationLabel: invoice,
-                      child: _qr(l10n, invoice),
+                      child: _qr(l10n, invoice, node: peer.order.nodePubkey),
                     ),
                     if (remaining != null) ...[
                       const SizedBox(height: 12),
@@ -520,30 +520,16 @@ class _PayLightningInvoiceScreenState
     child: body,
   );
 
-  /// 168 dp of code inside a 12 dp white quiet zone. The tight box also
-  /// answers the page's intrinsic-height pass, which `QrImageView` (built on
-  /// a `LayoutBuilder`) cannot.
-  Widget _qr(AppLocalizations l10n, String invoice) => Center(
-    child: SizedBox.square(
-      dimension: 168 + 2 * 12,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          // design-check: ignore DS-COL-1 — a QR code must be pure black on white to scan
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: QrImageView(
+  /// The Mostro QR across the card's width, the order's node in its centre
+  /// (#851).
+  Widget _qr(AppLocalizations l10n, String invoice, {required String node}) =>
+      Center(
+        child: OrderNodeQr(
           data: invoice,
-          size: 168,
-          padding: EdgeInsets.zero,
-          // design-check: ignore DS-COL-1 — a QR code must be pure black on white to scan
-          backgroundColor: Colors.white,
+          nodePubkey: node,
           semanticsLabel: l10n.invoiceQrSemantics(invoice),
         ),
-      ),
-    ),
-  );
+      );
 
   /// What both payment paths show once the sats are on their way and only
   /// mostrod's confirmation is missing. Shared so the wallet branch and the

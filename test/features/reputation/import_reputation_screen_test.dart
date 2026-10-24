@@ -345,7 +345,19 @@ void main() {
     await _tap(tester, _en.reputationCheck);
 
     // Assert
-    expect(find.textContaining('1 rating received,'), findsOneWidget);
+    expect(find.textContaining('1 rating ·'), findsOneWidget);
+  });
+
+  // DS-L10N-5: an imported reputation reads like every other one.
+  testWidgets('the figures read as a reputation does on every screen', (
+    tester,
+  ) async {
+    await _pump(tester);
+
+    await _paste(tester, _json);
+    await _tap(tester, _en.reputationCheck);
+
+    expect(find.text('★ 4.87 · 214 ratings · since Oct 2023'), findsOneWidget);
   });
 
   testWidgets('shows the full selectable npub for the bot confirmation', (

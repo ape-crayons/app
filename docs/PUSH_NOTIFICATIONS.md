@@ -888,7 +888,10 @@ The trade and chat cards come from `lib/features/notifications/services/event_ca
 - **Trade status** — one card per order and status (`trade-<order>-<status>[-<reason>]`,
   through `addIfNew`), dated by `TradeUpdate.occurred_at` (the daemon message's
   `created_at`). None for the book's `pending` / `in-progress`, the maker's own bond or the
-  user's own cancel. Dispute statuses and solver chat cards are included in
+  user's own cancel. A `pending` with `OrderPublished` is not the book's: the node
+  published the user's order once the maker's bond locked (or after a create that timed
+  out), which is what the maker's push was about, and it raises "Order published". Dispute
+  statuses and solver chat cards are included in
   the Disputes filter. Tap → trade detail.
 - **Chat** — one card per trade (`chat-<order>`, the solver's apart as
   `chat-<order>-solver`), counting messages since the card was last read; each message id
@@ -913,9 +916,15 @@ The trade and chat cards come from `lib/features/notifications/services/event_ca
   keeps its row, and its cancel (the escrow deadline, a hold invoice canceled while
   active) raises its card. On screen, a group card whose node is not the active one
   shows an amber line naming it, read as the card is shown, so it leaves once the user
-  is on that node. Tapping it opens nothing: an informative dialog, answered only with
-  OK, says the trade is acted on from its node, switched to in Settings
-  (`NotificationGroupCard`). A card that recorded no node reads as the active node's.
+  is on that node. Tapping it, or its Go to trade, asks whether to switch to that node
+  (`OtherNodeSwitchDialog`): Cancel leaves everything as it was. Change node runs the
+  switch with the dialog open, as Settings does, then restores the account on that node
+  and opens what was tapped, the chat or the trade (`NotificationsScreen`, through
+  `lib/features/settings/services/node_switch.dart`). No warning about a trade left on
+  the current node and no block on an unreachable node: the user is going to a trade of
+  their own there. A node missing from the registry is offered too, named by its short
+  key. A failed switch says so and opens nothing. A card that recorded no node reads as
+  the active node's.
 
 ### 9.3 The OS notification
 

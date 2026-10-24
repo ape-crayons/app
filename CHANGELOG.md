@@ -4,6 +4,46 @@ All notable changes to Mostro are documented here, newest first. This file is
 written by the release workflow (docs/RELEASING.md) — do not edit it by hand.
 Versions follow [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-10-21
+
+### ✨ Features
+
+- **cashu:** C3b-1 — send to Lightning (melt) ([#855](https://github.com/MostroP2P/app/pull/855)) by @Forte11Cuba
+- **nodes:** restore on node switch and show only the active node's trades (phase 5a of 5) ([#858](https://github.com/MostroP2P/app/pull/858)) by @Catrya
+- **qr:** show the Mostro QR, with the order's node in its centre ([#852](https://github.com/MostroP2P/app/pull/852)) by @grunch
+- **l10n:** add Brazilian Portuguese and review every locale ([#840](https://github.com/MostroP2P/app/pull/840)) by @grunch
+- **nodes:** add Mostro México to the trusted node registry ([#838](https://github.com/MostroP2P/app/pull/838)) by @grunch
+
+### 🐛 Bug Fixes
+
+- **orders:** a pending older than the take does not reopen an own order ([#630](https://github.com/MostroP2P/app/pull/630)) by @Forte11Cuba
+- **cashu:** keep a Lightning payment in flight safe from reconnect and Sync, refuse a paid quote ([#867](https://github.com/MostroP2P/app/pull/867)) by @Forte11Cuba
+- **trades:** adopt or wipe the trades without a node (phase 5b of 5) ([#865](https://github.com/MostroP2P/app/pull/865)) by @Catrya
+- **reputation:** show a user's reputation the same way on every screen ([#862](https://github.com/MostroP2P/app/pull/862)) by @grunch
+- **trades:** a pending order's first step waits for a taker ([#861](https://github.com/MostroP2P/app/pull/861)) by @grunch
+- **qr:** let the QR take the width of its card ([#857](https://github.com/MostroP2P/app/pull/857)) by @grunch
+- **restore:** keep a restore snapshot per node (phase 4 of 5) ([#841](https://github.com/MostroP2P/app/pull/841)) by @Catrya
+- **notifications:** say the order was published once the bond locks ([#846](https://github.com/MostroP2P/app/pull/846)) by @grunch
+- **orders:** close a lapsed bond window at its deadline wherever the user is ([#850](https://github.com/MostroP2P/app/pull/850)) by @grunch
+- **trades:** show the buyer Mostro's payout as its own step ([#847](https://github.com/MostroP2P/app/pull/847)) by @grunch
+- **order-book:** show fixed-price orders' price per BTC instead of a 0% premium ([#816](https://github.com/MostroP2P/app/pull/816)) by @21Mill
+
+### ⚡ Performance
+
+- **nodes:** keep node pictures on the device so a QR shows its node at once ([#863](https://github.com/MostroP2P/app/pull/863)) by @grunch
+
+### 📚 Documentation
+
+- **release:** restrict the release environment to release tags ([#859](https://github.com/MostroP2P/app/pull/859)) by @grunch
+
+### 🧹 Chores
+
+- **zapstore:** add store images and stop listing NIP-59 ([#860](https://github.com/MostroP2P/app/pull/860)) by @grunch
+
+### 🔧 Other Changes
+
+- Feat/missing currencies ([#853](https://github.com/MostroP2P/app/pull/853)) by @Forte11Cuba
+
 ## [2.0.17] - 2026-10-16
 
 ### ✨ Features

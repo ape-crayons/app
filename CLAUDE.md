@@ -165,7 +165,7 @@ bridged by flutter_rust_bridge.
 - Wire status strings are **kebab-case** (`waiting-buyer-invoice`, `fiat-sent`).
 
 ## Translations
-- **All user-facing strings are Dart-level** (Flutter l10n): `lib/l10n/app_{en,es,fr,de,it,nl}.arb`,
+- **All user-facing strings are Dart-level** (Flutter l10n): `lib/l10n/app_{en,es,fr,de,it,nl,pt}.arb`,
   config `l10n.yaml`, generated `AppLocalizations` via `flutter gen-l10n`, used with
   `AppLocalizations.of(context)`.
 - **One exception, deliberate:** `lib/core/startup_failure.dart` hard-codes its
@@ -377,6 +377,18 @@ bridged by flutter_rust_bridge.
   from a detail screen; `test/core/back_navigation_test.dart` walks every route and fails.
   An OS notification tap is a `go`, never a `push`: it starts a fresh stack. The bottom bar
   reads its lit tab from the screen's route, not from state.
+- **What the user browses is the active node's; the trade lists stay whole (#813).** My Trades,
+  the Chats list and their counters read `activeNodeTradeRowsProvider` / `activeNodeChatRoomsProvider`;
+  `rawTradesProvider` and `tradeRowsProvider` keep every node's trades, because Notifications needs
+  another node's row for its header, pinning and "Go to trade". Filtering them breaks those cards.
+  A row without a node is shown on no node (`isOnActiveNode`), unlike for actions (`isOnOtherNode`).
+  A restore that names its order with its trade index gives it that node — among the orders or the
+  disputes, which mostrod lists apart — and so does a message from the active node to the row's trade
+  key naming the order (the history replayed at start included), never a `CantDo`, which echoes
+  whatever id it refuses. The stale sweep wipes the rest that are finished and started before
+  `unadopted_rows_since`, never on the first sweep of a process, 72 h after it: messages, chat
+  cursors, cached chat and session go too, and the chat-room notifier drops their room. A live one
+  waits, hidden, for its node to name it.
 - **Trade screens are pushed, not polled — so every trade write must ring.** Rust's
   `api::trade_touch::touch_trade(order_id)` is the doorbell behind `tradeStatusProvider`, the
   invoice providers (`trade_state_provider.dart`) and the trade list (`rawTradesProvider`, which
@@ -400,5 +412,11 @@ bridged by flutter_rust_bridge.
   stays on 6.x until the app builds with Flutter 3.44 (7.1+). Release Linux and Windows builds
   are single-instance on purpose — that is how a link reaches the window already open — and
   debug builds are not, so `flutter run` still works next to an open release.
+- **A node's picture is drawn from the device, not from its URL.** `rust/src/node_pictures.rs`
+  downloads each node's kind 0 `picture` once per URL, after every metadata refresh (the first
+  at launch, once the warm-up has the relays), and `NodeAvatar` draws the stored bytes
+  (`nodePictureProvider`); `Image.network` is only the fallback while nothing is stored from the
+  URL the profile names now. Don't go back to the URL: on native nothing caches it across
+  launches, so every first QR downloaded it with its centre blank meanwhile.
 
 <!-- MANUAL ADDITIONS END -->

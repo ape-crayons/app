@@ -53,8 +53,12 @@ Widget invoiceCounterpartRow(
       handle ?? l10n.unknownPeerHandle,
       trailing:
           hasSnapshot
-              ? counterpartStars(trade.peerRating, trade.peerReviews) ??
-                  l10n.invoiceNoTrades
+              ? counterpartStars(
+                    trade.peerRating,
+                    trade.peerReviews,
+                    l10n.localeName,
+                  ) ??
+                  l10n.reputationRatingsCount(0)
               : null,
     ),
   );

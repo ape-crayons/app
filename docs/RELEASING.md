@@ -56,7 +56,8 @@ keytool -genkeypair -v -keystore mostro-release.jks -alias mostro \
 base64 -w0 mostro-release.jks        # value of ANDROID_KEYSTORE_FILE
 ```
 
-Repository secrets (Settings → Secrets and variables → Actions), same names as v1's workflow:
+Secrets of the `release` environment (Settings → Environments → `release`), same names as
+v1's workflow:
 
 | Secret | Value |
 | --- | --- |
@@ -68,6 +69,11 @@ Repository secrets (Settings → Secrets and variables → Actions), same names 
 With a secret missing the run fails at "Check signing secrets". There is deliberately no
 fallback to the debug key, and the job re-checks the certificate of each finished APK.
 
+GitHub never shows a secret again once it is set, and the `release` environment admits only
+release tags (see *Repository settings*), so no workflow pushed to a branch can hand them back
+either: the offline backup — the keystore **and** its passwords — is the only copy outside
+GitHub.
+
 To sign a build locally, create `android/key.properties` (`storeFile`, `storePassword`,
 `keyPassword`, `keyAlias`); without it a release build uses the debug key, which is fine for
 `flutter run --release` and must never be distributed.
@@ -78,12 +84,17 @@ To sign a build locally, create `android/key.properties` (`storeFile`, `storePas
   requests"** — for the changelog PR. Without it the release is still published and the
   `changelog` job fails with the branch name to open the PR from by hand.
 - **Restrict who can release.** Anyone with write access can push a tag, and a `vX.Y.Z` tag on
-  `main` is all the workflow asks for. Do both:
+  `main` is all the workflow asks for. Do all three:
   - a **tag ruleset** (Settings → Rules → Rulesets) limiting creation of `v*` to admins;
   - **required reviewers on the `release` environment** (Settings → Environments). The
     `android` job — the only one that sees the signing key — runs in it, so the run then
     waits for an admin's approval before anything is signed. Moving the four secrets from
-    repository to environment scope keeps them out of reach of every other workflow.
+    repository to environment scope keeps them from every job that does not name `release`;
+    one that does, in any workflow, gets them once it passes the environment's rules;
+  - **only release tags may deploy to it** (same page → Deployment branches and tags →
+    Selected branches and tags → a *Tag* rule `v*.*.*`). A job from any other ref then fails
+    instead of waiting for approval: an approval always means a release, and a workflow
+    pushed to a branch cannot read the key even with one.
 
 ## What a release contains
 

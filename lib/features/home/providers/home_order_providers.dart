@@ -122,17 +122,16 @@ class OrderItem {
   final int tradeCount;
 
   /// The rating tag's deprecated day count, frozen when the daemon published
-  /// the event. Display [makerDaysOnMostro] instead; this is its fallback.
+  /// the event. Display [makerFirstTrade] instead; this is its fallback.
   final int daysActive;
 
   /// The maker's first trade (the rating tag's `since`, a UTC day start), or
   /// `null` from daemons that predate it.
   final DateTime? makerSince;
 
-  /// Days the maker has been on Mostro, computed now from [makerSince] when
-  /// present, otherwise [daysActive].
-  int get makerDaysOnMostro =>
-      daysOnMostro(makerSince, fallbackDays: daysActive);
+  /// The maker's first trade: [makerSince], else [daysActive] back from now.
+  DateTime get makerFirstTrade =>
+      firstTradeDay(makerSince, fallbackDays: daysActive);
 
   /// Current order status from the Mostro protocol.
   final OrderStatus status;

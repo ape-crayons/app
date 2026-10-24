@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart' show NumberFormat;
 
 import 'package:mostro/core/app_routes.dart';
 import 'package:mostro/core/app_theme.dart' show AppFonts;
@@ -16,6 +15,8 @@ import 'package:mostro/features/reputation/reputation_errors.dart';
 import 'package:mostro/features/reputation/widgets/reputation_controls.dart';
 import 'package:mostro/l10n/app_localizations.dart';
 import 'package:mostro/shared/utils/platform_int64.dart';
+import 'package:mostro/shared/utils/rating_format.dart';
+import 'package:mostro/shared/utils/reputation_age.dart';
 import 'package:mostro/shared/widgets/redesign_app_bar.dart';
 import 'package:mostro/src/rust/api/reputation_transfer.dart';
 
@@ -441,14 +442,11 @@ class _Figures extends StatelessWidget {
       platformInt64ToInt(attestation.since) * 1000,
       isUtc: true,
     );
-    final days = DateTime.now().toUtc().difference(since).inDays;
     // The core sends the average as text with two decimals ("4.87"); shown
-    // like the order book's ratings, for the locale (DS-L10N-3).
+    // like every other rating, for the locale (DS-L10N-5).
     final average = double.tryParse(attestation.rating);
     final rating =
-        average == null
-            ? attestation.rating
-            : NumberFormat('0.##', locale).format(average);
+        average == null ? attestation.rating : formatRating(average, locale);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -459,12 +457,10 @@ class _Figures extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // The same three figures as every reputation (DS-L10N-5).
           Text(
-            l10n.reputationFigures(
-              attestation.reviews,
-              rating,
-              days < 0 ? 0 : days,
-            ),
+            '★ $rating · ${l10n.reputationRatingsCount(attestation.reviews)}'
+            ' · ${reputationSinceText(l10n, since)}',
             style: TextStyle(
               color: book.textPrimary,
               fontSize: 15,

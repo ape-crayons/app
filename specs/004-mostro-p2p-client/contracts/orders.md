@@ -70,6 +70,27 @@ applies the first two before recording the event, and
   (`TradeActionListener`); its Notifications cards carry an amber node line
   and open nothing (`docs/PUSH_NOTIFICATIONS.md` §9.2). A row without a node
   counts as the active node's.
+- A row without a node is adopted by the restore that names it
+  ([identity](identity.md)), from the reply alone, and by a message from
+  the active node to its trade key that names the order (the history
+  replayed at start included), which privacy mode gets too; never by a
+  `CantDo`, which echoes the id of whatever it refuses. A finished one comes
+  back as history. The stale sweep, from its second run in a process (the
+  first comes 60 s in, while the replay may still be adopting), wipes the
+  others that are finished and started before it first ran on this rule
+  (`unadopted_rows_since`, identity-scoped, written once), 72 h after it:
+  their chat stops first (`messages::stop_chat_subscriptions`, under the
+  order's lock, so no task writes a cursor afterwards), then their chat
+  cursors and their chat messages go (`messages::forget_order_cursors`,
+  `Storage::delete_messages_for_order`: a failed delete keeps the row for
+  the next sweep, and a row kept that way still has its messages), then
+  the row, without a trade update, so no notice; then, best effort, the
+  cursors again, the chat the process holds and the session
+  (`messages::forget_order_chat`).
+  The chat-room notifier drops their room. A live one is never wiped by the
+  clock: it may run on a node other than the active one, and waits hidden
+  until its node names it. A later restore that names a wiped one rebuilds
+  it, lifts its tombstone and fetches its chat again (#813).
 - A trade's chat stays on its node: see [messages](messages.md) and
   [disputes](disputes.md).
 
@@ -100,7 +121,8 @@ a stale replay:
 
 - **create**: reconciled — the daemon UUID is bound to the attempt's trade
   index, and the maker row is persisted from the echoed order itself (#394;
-  the payload is the published order, min/max included).
+  the payload is the published order, min/max included). Its `TradeUpdate`
+  carries `OrderPublished`: the user last saw the create fail.
 - **take**: reconciled — the nonce-correlated late reply is consumed as the
   take's (so a stale replay still touches nothing) and handed to the
   late-take reconcile (`reconcile_late_take`, in `api/orders/late_take.rs`),
@@ -330,7 +352,8 @@ daemon id but no kind 38383 event until the bond is paid: `create_order`
 returns it at `WaitingMakerBond`, and persists the maker row with `bond` set
 (`role = Maker`, `state = Requested`, the bolt11 and its decoded expiry). The
 later `new-order` for that id is the only sign the bond locked; it moves the
-row to `Pending` with the bond `Locked`. Walking away is `cancel_order`, which
+row to `Pending` with the bond `Locked`, and emits `TradeUpdate` with reason
+`OrderPublished`, dated by that message. Walking away is `cancel_order`, which
 in this window waits for the daemon's answer (see *Maker's bond window* under
 `cancel_order`).
 
@@ -704,6 +727,7 @@ TradeUpdate {
 
 TradeUpdateReason: UserCanceled | MakerCanceled | BondLostRace | BondExpired
                  | CooperativeCancelRequestedByMe | CooperativeCancelRequestedByPeer
+                 | Replayed | PayoutFailed | OrderPublished
 ```
 
 The two `CooperativeCancelRequested*` reasons ride on an emission whose
@@ -712,6 +736,21 @@ they say a cooperative-cancel request was confirmed for this side or made
 by the counterparty. Consumers keyed on status alone (the trade screen's
 status provider) see nothing new; the Notifications cards key on status
 **and** reason, so each request gets its own card, once.
+
+Three more reasons tell a status apart from the same status with another
+meaning:
+
+- `Replayed`: a status Rust only re-states, dated now — a restore filing an
+  old trade, a re-read after the peer's reputation. It raises no card (#770).
+- `PayoutFailed`: rides on `WaitingBuyerInvoice` when the node asks for a new
+  invoice because it could not pay the buyer (#823).
+- `OrderPublished`: rides on `Pending` when the node published this client's
+  order after `create_order` had returned. That is the maker's bond locking:
+  the `new-order`, dated by that message, or the public book carrying the
+  order first, dated now. It is also a confirmation that arrived after the
+  create timed out. It raises the "Order published" card, which is what the
+  maker's push was about. A `Pending` without it (the book's bucket, a
+  republish after a taker left) raises none.
 
 ### on_order_status_changed(order_id: String) → Stream<OrderStatus>
 Emits when a specific order's status changes.
@@ -1080,12 +1119,25 @@ Covers cancellations whose daemon message the app never received (closed or
 offline when the daemon's waiting window expired). Runs 60s after the
 order subscription starts, then every 30 minutes: waiting trades past
 their window (`timeout_at`, else `started_at + 900`) are checked against
-the public book — `pending` republish wipes taker rows (handing the order
-back to the book, as the `Canceled` wipe does) and resyncs maker
-rows to `Pending`; an outright cancel wipes; absence from the book or the
-ambiguous `in-progress` marker changes nothing. Every action requires a
-positive daemon signal; the clock only triggers the check. The sweep also
-drops keyless in-memory sessions older than 24h and logs counters.
+the public book, or, when the book has no entry, against the newest revision
+the relays hold for that one order — `pending` republish wipes taker rows
+(handing the order back to the book, as the `Canceled` wipe does) and
+resyncs maker rows to `Pending`; an outright cancel wipes; absence from the
+book or the ambiguous `in-progress` marker changes nothing. Every action
+requires a positive daemon signal; the clock only triggers the check. The
+sweep also drops keyless in-memory sessions older than 24h and logs counters.
+
+A `pending` older than the take is not a republish (#628). Neither age gate
+protects against one: a maker's `started_at` is the order's creation, which
+a take does not move, and a taker's `timeout_at` is the client's take + 900 s
+while the daemon may still be waiting. So the book never holds one for a
+waiting trade of ours (*Public status vs. trade status*), and a revision
+fetched on a book miss is dated the same way: strictly older than the
+order's status cursor, it changes nothing.
+
+A `success` for a row still at `SettledHoldInvoice` completes it, dated by
+the revision that carried it (#642): the one already fetched on a book miss,
+otherwise one lookup, since the book keeps no time.
 
 `process_gift_wrap_rumor` MUST update **both** the in-memory order book
 (`order_book().update_order_status`) **and** the persisted trade row
@@ -1116,6 +1168,19 @@ ever learned from daemon messages, so:
   back to the public view (see *Daemon cancellation semantics*). A
   `canceled` that reaches a never-active trade of ours wipes it instead of
   being written to it (same section).
+- The book feed (`ingest_order_event`) lets a `pending` past that gate, so a
+  republish reaches the book. For an order of ours still waiting on its take
+  (`WaitingPayment`, `WaitingBuyerInvoice`, `InProgress`) it MUST date that
+  `pending` first (#628). Relays do not all hold an order's newest revision,
+  and after a cold start or on a refetch one that lags still serves the
+  `pending` from before the take. The order's status cursor dates the take:
+  it is the last daemon status this client accepted, in the node's clock,
+  like the event's `created_at`. A `pending` strictly older than it leaves
+  the entry at the local status. One from the same second or later applies,
+  and so does any `pending` without a cursor to compare. The bond windows
+  are not waiting steps: a `WaitingTakerBond` order publishes as `pending`.
+  The d-tag path needs no such check, since `wire_status_applies` never lets
+  a `pending` replace a waiting status there.
 - Both paths MUST accept only events authored by the active node: a d-tag is
   public, and a `canceled` deletes a trade row. The live book subscription
   and the refetch drop other authors before ingesting; `subscribe_single_order`

@@ -10,7 +10,7 @@ part 'types.freezed.dart';
 
 // These functions are ignored because they are not marked as `pub`: `default_expiration_hours`, `default_expiration_seconds`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AppState`, `MostroNodeInfo`, `QueuedMessageStatus`, `TradeHistoryEntry`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`
 
 /// The `bond_claims` key for a node / order pair.
 Future<String> bondClaimKey({
@@ -636,6 +636,74 @@ class CashuEscrowQuote {
           pendingSubmission == other.pendingSubmission;
 }
 
+/// What paying a Lightning invoice from the Cashu wallet costs — phase C3b-1.
+///
+/// Shown for confirmation before anything is spent. Nothing is reserved
+/// while it is on screen; [`crate::api::cashu::cashu_melt`] prices the quote
+/// again and refuses one that now costs more than `max_total_sats`.
+class CashuMeltQuote {
+  /// The mint's quote id, handed back to pay it.
+  final String quoteId;
+
+  /// What the invoice asks for.
+  final BigInt amountSats;
+
+  /// The most the mint may spend on Lightning routing; what it does not
+  /// spend comes back to the wallet.
+  final BigInt feeReserveSats;
+
+  /// The mint's input fees on the ecash spent (a swap's included).
+  final BigInt inputFeeSats;
+
+  /// The most the payment can take from the balance: amount, fee reserve
+  /// and input fees. "Up to", not exact: unspent reserve is returned.
+  final BigInt maxTotalSats;
+
+  const CashuMeltQuote({
+    required this.quoteId,
+    required this.amountSats,
+    required this.feeReserveSats,
+    required this.inputFeeSats,
+    required this.maxTotalSats,
+  });
+
+  @override
+  int get hashCode =>
+      quoteId.hashCode ^
+      amountSats.hashCode ^
+      feeReserveSats.hashCode ^
+      inputFeeSats.hashCode ^
+      maxTotalSats.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CashuMeltQuote &&
+          runtimeType == other.runtimeType &&
+          quoteId == other.quoteId &&
+          amountSats == other.amountSats &&
+          feeReserveSats == other.feeReserveSats &&
+          inputFeeSats == other.inputFeeSats &&
+          maxTotalSats == other.maxTotalSats;
+}
+
+@freezed
+sealed class CashuMeltResult with _$CashuMeltResult {
+  const CashuMeltResult._();
+
+  /// The invoice is paid. `fee_paid_sats` is what it actually cost beyond
+  /// the invoice: routing plus the mint's input fees.
+  const factory CashuMeltResult.paid({
+    required BigInt amountSats,
+    required BigInt feePaidSats,
+  }) = CashuMeltResult_Paid;
+
+  /// How it ended is not known yet: the mint is still routing it, or did
+  /// not answer after the request left. Its ecash stays reserved until the
+  /// mint says, at the next sync.
+  const factory CashuMeltResult.pending() = CashuMeltResult_Pending;
+}
+
 /// State of the embedded Cashu wallet — phase C2 of `docs/cashu/README.md`.
 ///
 /// Reported for every node, including Lightning ones, where it is simply
@@ -662,11 +730,17 @@ class CashuWalletStatus {
   /// here means the wallet is bound to a mint that has since changed.
   final List<String> missingCapabilities;
 
+  /// Whether the mint melts to `bolt11` invoices (NUT-05), so the wallet
+  /// can pay one — phase C3b-1. False when not connected. Optional: a mint
+  /// without it is still usable, and the UI hides "to Lightning" instead.
+  final bool canSendLightning;
+
   const CashuWalletStatus({
     required this.connected,
     this.mintUrl,
     this.balanceSats,
     required this.missingCapabilities,
+    required this.canSendLightning,
   });
 
   @override
@@ -674,7 +748,8 @@ class CashuWalletStatus {
       connected.hashCode ^
       mintUrl.hashCode ^
       balanceSats.hashCode ^
-      missingCapabilities.hashCode;
+      missingCapabilities.hashCode ^
+      canSendLightning.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -684,7 +759,8 @@ class CashuWalletStatus {
           connected == other.connected &&
           mintUrl == other.mintUrl &&
           balanceSats == other.balanceSats &&
-          missingCapabilities == other.missingCapabilities;
+          missingCapabilities == other.missingCapabilities &&
+          canSendLightning == other.canSendLightning;
 }
 
 class ChatMessage {
@@ -1248,6 +1324,27 @@ class MostroNodeEntry {
           picture == other.picture &&
           about == other.about &&
           website == other.website;
+}
+
+/// A node's kind 0 picture as the device keeps it (`crate::node_pictures`):
+/// the bytes as downloaded and the URL they came from, so the UI shows them
+/// only while the profile still names that URL.
+class MostroNodePicture {
+  final String url;
+  final Uint8List bytes;
+
+  const MostroNodePicture({required this.url, required this.bytes});
+
+  @override
+  int get hashCode => url.hashCode ^ bytes.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MostroNodePicture &&
+          runtimeType == other.runtimeType &&
+          url == other.url &&
+          bytes == other.bytes;
 }
 
 /// Parameters for creating a new order via the Mostro protocol.
@@ -2439,6 +2536,13 @@ enum TradeUpdateReason {
   /// Rides on `WaitingBuyerInvoice`, like the first request, so the card
   /// and the screens can tell the two apart (#823).
   payoutFailed,
+
+  /// The node published this client's order after `create_order` had
+  /// returned: the maker's bond locked (`WaitingMakerBond → Pending`), or
+  /// the confirmation came after the create timed out. Rides on `Pending`,
+  /// which raises no card on its own (the book's bucket carries it too),
+  /// so the card can tell the publication apart.
+  orderPublished,
 }
 
 enum WalletStatus { connected, disconnected, connecting, error }

@@ -696,6 +696,12 @@ pub enum TradeUpdateReason {
     /// Rides on `WaitingBuyerInvoice`, like the first request, so the card
     /// and the screens can tell the two apart (#823).
     PayoutFailed,
+    /// The node published this client's order after `create_order` had
+    /// returned: the maker's bond locked (`WaitingMakerBond → Pending`), or
+    /// the confirmation came after the create timed out. Rides on `Pending`,
+    /// which raises no card on its own (the book's bucket carries it too),
+    /// so the card can tell the publication apart.
+    OrderPublished,
 }
 
 /// An image or file sent in a chat (#589), as read from v1's JSON message.
@@ -1070,6 +1076,15 @@ pub struct MostroNodeEntry {
     pub website: Option<String>,
 }
 
+/// A node's kind 0 picture as the device keeps it (`crate::node_pictures`):
+/// the bytes as downloaded and the URL they came from, so the UI shows them
+/// only while the profile still names that URL.
+#[derive(Debug, Clone, PartialEq)]
+pub struct MostroNodePicture {
+    pub url: String,
+    pub bytes: Vec<u8>,
+}
+
 fn default_expiration_seconds() -> u32 {
     900
 }
@@ -1331,6 +1346,46 @@ pub struct CashuWalletStatus {
     /// a mint missing any of them is refused at connect, so a non-empty list
     /// here means the wallet is bound to a mint that has since changed.
     pub missing_capabilities: Vec<String>,
+    /// Whether the mint melts to `bolt11` invoices (NUT-05), so the wallet
+    /// can pay one — phase C3b-1. False when not connected. Optional: a mint
+    /// without it is still usable, and the UI hides "to Lightning" instead.
+    pub can_send_lightning: bool,
+}
+
+/// What paying a Lightning invoice from the Cashu wallet costs — phase C3b-1.
+///
+/// Shown for confirmation before anything is spent. Nothing is reserved
+/// while it is on screen; [`crate::api::cashu::cashu_melt`] prices the quote
+/// again and refuses one that now costs more than `max_total_sats`.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CashuMeltQuote {
+    /// The mint's quote id, handed back to pay it.
+    pub quote_id: String,
+    /// What the invoice asks for.
+    pub amount_sats: u64,
+    /// The most the mint may spend on Lightning routing; what it does not
+    /// spend comes back to the wallet.
+    pub fee_reserve_sats: u64,
+    /// The mint's input fees on the ecash spent (a swap's included).
+    pub input_fee_sats: u64,
+    /// The most the payment can take from the balance: amount, fee reserve
+    /// and input fees. "Up to", not exact: unspent reserve is returned.
+    pub max_total_sats: u64,
+}
+
+/// How a confirmed payment to a Lightning invoice ended — phase C3b-1.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum CashuMeltResult {
+    /// The invoice is paid. `fee_paid_sats` is what it actually cost beyond
+    /// the invoice: routing plus the mint's input fees.
+    Paid {
+        amount_sats: u64,
+        fee_paid_sats: u64,
+    },
+    /// How it ended is not known yet: the mint is still routing it, or did
+    /// not answer after the request left. Its ecash stays reserved until the
+    /// mint says, at the next sync.
+    Pending,
 }
 
 /// What a seller is about to lock into a Cashu escrow — phase C5.

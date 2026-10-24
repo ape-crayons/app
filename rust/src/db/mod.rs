@@ -33,12 +33,19 @@ pub mod settings_keys {
     /// kind-14 filter (docs/ANTI_ABUSE_BOND.md §6.4).
     pub const BOND_CLAIM_RETAINED_NODES: &str = "bond_claim_retained_nodes";
 
-    /// What the last restore reported as in progress, as JSON
-    /// ([`crate::mostro::restore_history::RestoreSnapshot`]). Identity-scoped:
-    /// its trade-index floor and live set describe the identity that ran the
-    /// restore, and read against the next one they wipe its live trades as
-    /// history (#614).
+    /// The single restore snapshot stored before they were kept per node
+    /// ([`RESTORE_SNAPSHOT_PREFIX`], #812). It does not say which node's
+    /// trades it describes, so the history pass drops it. Identity-scoped
+    /// like them.
     pub const RESTORE_SNAPSHOT: &str = "restore_snapshot";
+
+    /// What the last restore of each node reported as in progress, as JSON
+    /// ([`crate::mostro::restore_history::RestoreSnapshot`]), one key per
+    /// node (#812): a restore describes only the trades of the node it was
+    /// sent to. Identity-scoped: its trade-index floor and live set describe
+    /// the identity that ran the restore, and read against the next one they
+    /// wipe its live trades as history (#614).
+    pub const RESTORE_SNAPSHOT_PREFIX: &str = "restore_snapshot:";
 
     /// The user's own reputation as each node last reported it (`user-info`),
     /// JSON map of node pubkey (hex) →
@@ -54,6 +61,13 @@ pub mod settings_keys {
     /// that destination on this identity's request, so it is of no use to
     /// the next identity.
     pub const PENDING_REPUTATION_ATTESTATION: &str = "pending_reputation_attestation";
+
+    /// When a stale sweep that may wipe first ran on a version that wipes the
+    /// finished trade rows without a node that no restore or daemon message
+    /// adopted (#813), unix seconds. They are wiped 72 h after it, not after
+    /// their own start: they are weeks old, and only those started before it.
+    /// Written once. Identity-scoped: the rows are that identity's.
+    pub const UNADOPTED_ROWS_SINCE: &str = "unadopted_rows_since";
 
     // ── Push notifications (docs/PUSH_NOTIFICATIONS.md §7.1, §8.1) ──────────
 
@@ -285,7 +299,7 @@ pub mod settings_keys {
     /// [`super::Storage::clear_identity_data`] drops it with the rows. What
     /// is left in the store is device preference: the active node, custom
     /// nodes, node caches, push token and toggle, developer overrides.
-    pub const IDENTITY_SCOPED_PREFIXES: [&str; 11] = [
+    pub const IDENTITY_SCOPED_PREFIXES: [&str; 12] = [
         CHAT_CURSOR_PREFIX,
         DISPUTE_ADMIN_PREFIX,
         DISPUTE_ADMIN_AT_PREFIX,
@@ -297,17 +311,24 @@ pub mod settings_keys {
         PAYOUT_AMOUNT_PREFIX,
         PAYOUT_ROUTE_PREFIX,
         TRADE_WIPED_PREFIX,
+        RESTORE_SNAPSHOT_PREFIX,
     ];
 
     /// The single keys that describe the identity, not the device, dropped
     /// with [`IDENTITY_SCOPED_PREFIXES`] by
     /// [`super::Storage::clear_identity_data`].
-    pub const IDENTITY_SCOPED_KEYS: [&str; 4] = [
+    pub const IDENTITY_SCOPED_KEYS: [&str; 5] = [
         BOND_CLAIM_RETAINED_NODES,
         RESTORE_SNAPSHOT,
         MY_REPUTATION,
         PENDING_REPUTATION_ATTESTATION,
+        UNADOPTED_ROWS_SINCE,
     ];
+
+    /// Build the settings key of the restore snapshot of `node` (hex).
+    pub fn restore_snapshot(node: &str) -> String {
+        format!("{RESTORE_SNAPSHOT_PREFIX}{}", node.to_ascii_lowercase())
+    }
 
     /// Build the settings key marking `order_id`'s trade row as wiped.
     pub fn trade_wiped(order_id: &str) -> String {
@@ -365,6 +386,10 @@ pub trait Storage: Send + Sync {
     /// Notification recovery must not depend on a live chat subscription.
     async fn list_unread_messages(&self) -> Result<Vec<crate::api::types::ChatMessage>>;
     async fn mark_messages_read(&self, trade_id: &str) -> Result<()>;
+    /// Delete every chat message of the order `order_id` (`trade_id` holds
+    /// the order id): the peer's and the dispute's alike. Other orders'
+    /// messages stay. No-op when it has none.
+    async fn delete_messages_for_order(&self, order_id: &str) -> Result<()>;
 
     /// `true` if a message with this id was already accepted and stored.
     ///
@@ -571,6 +596,14 @@ pub trait Storage: Send + Sync {
     /// empty `node` matches nothing. Returns whether it changed the row.
     async fn forget_trade_node(&self, row_id: &str, node: &str) -> Result<bool>;
 
+    /// Give `node` to the trade rows of `order_id` whose node is unknown
+    /// (`""` or absent, under either name) and whose `trade_key_index` is
+    /// `trade_index`: a restore on `node` named that order with that index
+    /// (#813). The reverse of [`Self::forget_trade_node`]: only the node
+    /// changes, a row that knows its node is never moved, and an empty `node`
+    /// matches nothing. Returns whether it changed a row.
+    async fn adopt_trade_node(&self, order_id: &str, trade_index: u32, node: &str) -> Result<bool>;
+
     /// Persist the counterparty's trade pubkey on the trade identified by
     /// `order.id` (issue #334). Written when a daemon message reveals it, for
     /// both roles — the trade row is the durable peer record; the in-memory
@@ -644,5 +677,36 @@ pub trait Storage: Send + Sync {
     /// The encrypted blob cached under `sha256`, if any.
     async fn get_attachment_blob(&self, _sha256: &str) -> Result<Option<Vec<u8>>> {
         Ok(None)
+    }
+
+    // ── Node pictures (`crate::node_pictures`) ──────────────────────────────
+    //
+    // Each registry node's kind 0 picture as downloaded, keyed by the node's
+    // pubkey, with the URL it came from. Device-scoped:
+    // [`Self::clear_identity_data`] leaves them alone. The defaults keep
+    // nothing, for stores with no cache: the UI then loads the picture from
+    // its URL. SQLite and IndexedDB both implement all four.
+
+    /// Insert or replace `pubkey`'s picture.
+    async fn save_node_picture(&self, _pubkey: &str, _url: &str, _bytes: &[u8]) -> Result<()> {
+        Ok(())
+    }
+
+    /// `pubkey`'s stored picture, if any.
+    async fn get_node_picture(
+        &self,
+        _pubkey: &str,
+    ) -> Result<Option<crate::api::types::MostroNodePicture>> {
+        Ok(None)
+    }
+
+    /// The URL of every stored picture, by node pubkey, without the bytes.
+    async fn list_node_picture_urls(&self) -> Result<std::collections::HashMap<String, String>> {
+        Ok(std::collections::HashMap::new())
+    }
+
+    /// Remove `pubkey`'s picture. No-op when absent.
+    async fn delete_node_picture(&self, _pubkey: &str) -> Result<()> {
+        Ok(())
     }
 }

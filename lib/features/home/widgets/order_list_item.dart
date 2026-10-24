@@ -9,6 +9,10 @@ import 'package:mostro/features/home/providers/home_order_providers.dart';
 import 'package:mostro/features/home/providers/order_reason_provider.dart';
 import 'package:mostro/l10n/app_localizations.dart';
 import 'package:mostro/shared/utils/abbreviated_figure.dart';
+import 'package:mostro/shared/utils/rating_format.dart';
+import 'package:mostro/shared/utils/reputation_age.dart';
+import 'package:mostro/shared/widgets/counterpart_reputation_row.dart'
+    show highlightFigures;
 
 const _cardRadius = BorderRadius.all(Radius.circular(18));
 
@@ -33,7 +37,7 @@ class OrderCardFormats {
   OrderCardFormats._(this._locale)
     : premium = NumberFormat('+0.0;-0.0', _locale),
       _unsignedPremium = NumberFormat('0.0', _locale),
-      rating = NumberFormat('0.##', _locale),
+      rating = ratingFormat(_locale),
       decimal = NumberFormat.decimalPattern(_locale),
       fiat = NumberFormat('#,##0.##', _locale);
 
@@ -44,7 +48,7 @@ class OrderCardFormats {
 
   final NumberFormat _unsignedPremium;
 
-  /// Raw ratings (4.9, 4.78): up to 2 decimals, no trailing zeros.
+  /// Ratings as every screen shows them (DS-L10N-5): `4.97`, `4.9`, `5`.
   final NumberFormat rating;
 
   /// Grouped integers: sats, trade count, days active.
@@ -585,92 +589,90 @@ class _ReputationStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isNew = order.tradeCount == 0;
-    final days = order.makerDaysOnMostro;
     final separator = Text('|', style: TextStyle(color: palette.divider));
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: palette.inset,
         borderRadius: BorderRadius.circular(12),
       ),
       child: DefaultTextStyle.merge(
         style: TextStyle(fontSize: 12, color: palette.textSecondary),
-        child: Wrap(
-          spacing: 10,
-          runSpacing: 4,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Icon(
-              Icons.star_rounded,
-              size: 14,
-              color: order.rating > 0 ? palette.yellow : palette.starEmpty,
-            ),
-            if (isNew)
-              Text(
-                l10n.reputationNew,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: palette.textNew,
-                ),
-              )
-            else
-              Text(
-                formats.rating.format(order.rating),
-                style: TextStyle(
-                  fontFamily: AppFonts.figures,
-                  fontWeight: FontWeight.w600,
-                  color: palette.textStrong,
-                ),
+        // Rating and count on the left, the age on the right; on a strip too
+        // narrow for both (`desde mar 2023` at 360 dp in Spanish) the age
+        // takes its own line instead of following a dangling separator.
+        child: SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: 12,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Wrap(
+                spacing: 10,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Icon(
+                    Icons.star_rounded,
+                    size: 14,
+                    color:
+                        order.rating > 0 ? palette.yellow : palette.starEmpty,
+                  ),
+                  if (isNew)
+                    Text(
+                      l10n.reputationNew,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: palette.textNew,
+                      ),
+                    )
+                  else
+                    Text(
+                      formats.rating.format(order.rating),
+                      style: TextStyle(
+                        fontFamily: AppFonts.figures,
+                        fontWeight: FontWeight.w600,
+                        color: palette.textStrong,
+                      ),
+                    ),
+                  separator,
+                  _Stat(
+                    text: l10n.reputationRatingsCount(order.tradeCount),
+                    palette: palette,
+                  ),
+                ],
               ),
-            separator,
-            if (isNew)
-              Text(l10n.reputationNoTrades)
-            else
               _Stat(
-                value: formats.decimal.format(order.tradeCount),
-                label: l10n.reputationTradesLabel(order.tradeCount),
+                text: reputationSinceText(l10n, order.makerFirstTrade),
                 palette: palette,
               ),
-            separator,
-            _Stat(
-              value: formats.decimal.format(days),
-              label: l10n.reputationDaysLabel(days),
-              palette: palette,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Figure + unit ("16 trades") in the reputation strip.
+/// One reputation figure in the strip (`16 ratings`, `since Mar 2025`),
+/// its digits set apart as on every reputation row.
 class _Stat extends StatelessWidget {
-  const _Stat({
-    required this.value,
-    required this.label,
-    required this.palette,
-  });
+  const _Stat({required this.text, required this.palette});
 
-  final String value;
-  final String label;
+  final String text;
   final OrderBookPalette palette;
 
   @override
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
-        children: [
-          TextSpan(
-            text: value,
-            style: TextStyle(
-              color: palette.textBody,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          TextSpan(text: ' $label'),
-        ],
+        children: highlightFigures(
+          text,
+          TextStyle(color: palette.textBody, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

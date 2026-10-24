@@ -21,9 +21,9 @@ import 'package:mostro/core/web/attachment_probe.dart';
 import 'package:mostro/core/web/bridge_probe.dart';
 import 'package:mostro/core/web/store_probe.dart';
 import 'package:mostro/features/chat/attachments/attachment_launcher.dart';
+import 'package:mostro/features/settings/providers/mostro_nodes_provider.dart';
 import 'package:mostro/features/settings/providers/node_stats_provider.dart';
 import 'package:mostro/features/settings/providers/settings_provider.dart';
-import 'package:mostro/features/settings/widgets/mostro_node_selector.dart';
 import 'package:mostro/features/walkthrough/providers/first_run_provider.dart';
 import 'package:mostro/firebase_options.dart';
 import 'package:mostro/src/rust/frb_generated.dart';
@@ -338,6 +338,15 @@ Future<void> _startup(
       nodeInfoWarmed.then(
         (_) => container.invalidate(activeNodeCurrenciesProvider),
       ),
+    );
+    // The nodes' profiles and pictures, so a QR has its node's face before
+    // it opens. Best effort, like the warm-up.
+    unawaited(
+      refreshNodeProfilesOnceConnected(container, nodeInfoWarmed).catchError((
+        Object e,
+      ) {
+        debugPrint('[main] node profile refresh failed: $e');
+      }),
     );
 
     // Restore NWC wallet connection if a URI was saved from a previous session.

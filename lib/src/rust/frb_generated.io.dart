@@ -717,6 +717,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   LogEntry dco_decode_box_autoadd_log_entry(dynamic raw);
 
   @protected
+  MostroNodePicture dco_decode_box_autoadd_mostro_node_picture(dynamic raw);
+
+  @protected
   MyReputation dco_decode_box_autoadd_my_reputation(dynamic raw);
 
   @protected
@@ -783,6 +786,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CashuEscrowQuote dco_decode_cashu_escrow_quote(dynamic raw);
+
+  @protected
+  CashuMeltQuote dco_decode_cashu_melt_quote(dynamic raw);
+
+  @protected
+  CashuMeltResult dco_decode_cashu_melt_result(dynamic raw);
 
   @protected
   CashuWalletStatus dco_decode_cashu_wallet_status(dynamic raw);
@@ -908,6 +917,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MostroNodeEntry dco_decode_mostro_node_entry(dynamic raw);
 
   @protected
+  MostroNodePicture dco_decode_mostro_node_picture(dynamic raw);
+
+  @protected
   MostroNodeStats dco_decode_mostro_node_stats(dynamic raw);
 
   @protected
@@ -980,6 +992,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   LogEntry? dco_decode_opt_box_autoadd_log_entry(dynamic raw);
+
+  @protected
+  MostroNodePicture? dco_decode_opt_box_autoadd_mostro_node_picture(
+    dynamic raw,
+  );
 
   @protected
   MyReputation? dco_decode_opt_box_autoadd_my_reputation(dynamic raw);
@@ -1768,6 +1785,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   LogEntry sse_decode_box_autoadd_log_entry(SseDeserializer deserializer);
 
   @protected
+  MostroNodePicture sse_decode_box_autoadd_mostro_node_picture(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MyReputation sse_decode_box_autoadd_my_reputation(
     SseDeserializer deserializer,
   );
@@ -1850,6 +1872,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CashuEscrowQuote sse_decode_cashu_escrow_quote(SseDeserializer deserializer);
+
+  @protected
+  CashuMeltQuote sse_decode_cashu_melt_quote(SseDeserializer deserializer);
+
+  @protected
+  CashuMeltResult sse_decode_cashu_melt_result(SseDeserializer deserializer);
 
   @protected
   CashuWalletStatus sse_decode_cashu_wallet_status(
@@ -1993,6 +2021,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MostroNodeEntry sse_decode_mostro_node_entry(SseDeserializer deserializer);
 
   @protected
+  MostroNodePicture sse_decode_mostro_node_picture(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   MostroNodeStats sse_decode_mostro_node_stats(SseDeserializer deserializer);
 
   @protected
@@ -2085,6 +2118,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   LogEntry? sse_decode_opt_box_autoadd_log_entry(SseDeserializer deserializer);
+
+  @protected
+  MostroNodePicture? sse_decode_opt_box_autoadd_mostro_node_picture(
+    SseDeserializer deserializer,
+  );
 
   @protected
   MyReputation? sse_decode_opt_box_autoadd_my_reputation(
@@ -3042,6 +3080,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_mostro_node_picture(
+    MostroNodePicture self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_my_reputation(
     MyReputation self,
     SseSerializer serializer,
@@ -3161,6 +3205,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_cashu_escrow_quote(
     CashuEscrowQuote self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_cashu_melt_quote(
+    CashuMeltQuote self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_cashu_melt_result(
+    CashuMeltResult self,
     SseSerializer serializer,
   );
 
@@ -3363,6 +3419,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_mostro_node_picture(
+    MostroNodePicture self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_mostro_node_stats(
     MostroNodeStats self,
     SseSerializer serializer,
@@ -3482,6 +3544,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_log_entry(
     LogEntry? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_mostro_node_picture(
+    MostroNodePicture? self,
     SseSerializer serializer,
   );
 
