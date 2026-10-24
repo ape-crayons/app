@@ -4570,6 +4570,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get messageMenuHint => 'Abrir o menu da mensagem';
 
   @override
+  String get drawerHelpMenuItem => 'Need help?';
+
+  @override
   String get cashuAnyMint => 'Qualquer mint';
 
   @override

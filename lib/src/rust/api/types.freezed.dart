@@ -13,335 +13,263 @@ part of 'types.dart';
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CashuMeltResult {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(BigInt amountSats, BigInt feePaidSats) paid,
-    required TResult Function() pending,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult? Function()? pending,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult Function()? pending,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(CashuMeltResult_Paid value) paid,
-    required TResult Function(CashuMeltResult_Pending value) pending,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CashuMeltResult_Paid value)? paid,
-    TResult? Function(CashuMeltResult_Pending value)? pending,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(CashuMeltResult_Paid value)? paid,
-    TResult Function(CashuMeltResult_Pending value)? pending,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CashuMeltResult);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CashuMeltResult()';
+}
+
+
 }
 
 /// @nodoc
-abstract class $CashuMeltResultCopyWith<$Res> {
-  factory $CashuMeltResultCopyWith(
-    CashuMeltResult value,
-    $Res Function(CashuMeltResult) then,
-  ) = _$CashuMeltResultCopyWithImpl<$Res, CashuMeltResult>;
+class $CashuMeltResultCopyWith<$Res>  {
+$CashuMeltResultCopyWith(CashuMeltResult _, $Res Function(CashuMeltResult) __);
 }
 
-/// @nodoc
-class _$CashuMeltResultCopyWithImpl<$Res, $Val extends CashuMeltResult>
-    implements $CashuMeltResultCopyWith<$Res> {
-  _$CashuMeltResultCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+/// Adds pattern-matching-related methods to [CashuMeltResult].
+extension CashuMeltResultPatterns on CashuMeltResult {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
 
-  /// Create a copy of CashuMeltResult
-  /// with the given fields replaced by the non-null parameter values.
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CashuMeltResult_Paid value)?  paid,TResult Function( CashuMeltResult_Pending value)?  pending,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid() when paid != null:
+return paid(_that);case CashuMeltResult_Pending() when pending != null:
+return pending(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CashuMeltResult_Paid value)  paid,required TResult Function( CashuMeltResult_Pending value)  pending,}){
+final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid():
+return paid(_that);case CashuMeltResult_Pending():
+return pending(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CashuMeltResult_Paid value)?  paid,TResult? Function( CashuMeltResult_Pending value)?  pending,}){
+final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid() when paid != null:
+return paid(_that);case CashuMeltResult_Pending() when pending != null:
+return pending(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( BigInt amountSats,  BigInt feePaidSats)?  paid,TResult Function()?  pending,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid() when paid != null:
+return paid(_that.amountSats,_that.feePaidSats);case CashuMeltResult_Pending() when pending != null:
+return pending();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( BigInt amountSats,  BigInt feePaidSats)  paid,required TResult Function()  pending,}) {final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid():
+return paid(_that.amountSats,_that.feePaidSats);case CashuMeltResult_Pending():
+return pending();}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( BigInt amountSats,  BigInt feePaidSats)?  paid,TResult? Function()?  pending,}) {final _that = this;
+switch (_that) {
+case CashuMeltResult_Paid() when paid != null:
+return paid(_that.amountSats,_that.feePaidSats);case CashuMeltResult_Pending() when pending != null:
+return pending();case _:
+  return null;
+
+}
 }
 
-/// @nodoc
-abstract class _$$CashuMeltResult_PaidImplCopyWith<$Res> {
-  factory _$$CashuMeltResult_PaidImplCopyWith(
-    _$CashuMeltResult_PaidImpl value,
-    $Res Function(_$CashuMeltResult_PaidImpl) then,
-  ) = __$$CashuMeltResult_PaidImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({BigInt amountSats, BigInt feePaidSats});
-}
-
-/// @nodoc
-class __$$CashuMeltResult_PaidImplCopyWithImpl<$Res>
-    extends _$CashuMeltResultCopyWithImpl<$Res, _$CashuMeltResult_PaidImpl>
-    implements _$$CashuMeltResult_PaidImplCopyWith<$Res> {
-  __$$CashuMeltResult_PaidImplCopyWithImpl(
-    _$CashuMeltResult_PaidImpl _value,
-    $Res Function(_$CashuMeltResult_PaidImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of CashuMeltResult
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? amountSats = null, Object? feePaidSats = null}) {
-    return _then(
-      _$CashuMeltResult_PaidImpl(
-        amountSats:
-            null == amountSats
-                ? _value.amountSats
-                : amountSats // ignore: cast_nullable_to_non_nullable
-                    as BigInt,
-        feePaidSats:
-            null == feePaidSats
-                ? _value.feePaidSats
-                : feePaidSats // ignore: cast_nullable_to_non_nullable
-                    as BigInt,
-      ),
-    );
-  }
-}
-
-/// @nodoc
-
-class _$CashuMeltResult_PaidImpl extends CashuMeltResult_Paid {
-  const _$CashuMeltResult_PaidImpl({
-    required this.amountSats,
-    required this.feePaidSats,
-  }) : super._();
-
-  @override
-  final BigInt amountSats;
-  @override
-  final BigInt feePaidSats;
-
-  @override
-  String toString() {
-    return 'CashuMeltResult.paid(amountSats: $amountSats, feePaidSats: $feePaidSats)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$CashuMeltResult_PaidImpl &&
-            (identical(other.amountSats, amountSats) ||
-                other.amountSats == amountSats) &&
-            (identical(other.feePaidSats, feePaidSats) ||
-                other.feePaidSats == feePaidSats));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, amountSats, feePaidSats);
-
-  /// Create a copy of CashuMeltResult
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$CashuMeltResult_PaidImplCopyWith<_$CashuMeltResult_PaidImpl>
-  get copyWith =>
-      __$$CashuMeltResult_PaidImplCopyWithImpl<_$CashuMeltResult_PaidImpl>(
-        this,
-        _$identity,
-      );
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(BigInt amountSats, BigInt feePaidSats) paid,
-    required TResult Function() pending,
-  }) {
-    return paid(amountSats, feePaidSats);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult? Function()? pending,
-  }) {
-    return paid?.call(amountSats, feePaidSats);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult Function()? pending,
-    required TResult orElse(),
-  }) {
-    if (paid != null) {
-      return paid(amountSats, feePaidSats);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(CashuMeltResult_Paid value) paid,
-    required TResult Function(CashuMeltResult_Pending value) pending,
-  }) {
-    return paid(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CashuMeltResult_Paid value)? paid,
-    TResult? Function(CashuMeltResult_Pending value)? pending,
-  }) {
-    return paid?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(CashuMeltResult_Paid value)? paid,
-    TResult Function(CashuMeltResult_Pending value)? pending,
-    required TResult orElse(),
-  }) {
-    if (paid != null) {
-      return paid(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class CashuMeltResult_Paid extends CashuMeltResult {
-  const factory CashuMeltResult_Paid({
-    required final BigInt amountSats,
-    required final BigInt feePaidSats,
-  }) = _$CashuMeltResult_PaidImpl;
-  const CashuMeltResult_Paid._() : super._();
-
-  BigInt get amountSats;
-  BigInt get feePaidSats;
-
-  /// Create a copy of CashuMeltResult
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CashuMeltResult_PaidImplCopyWith<_$CashuMeltResult_PaidImpl>
-  get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$CashuMeltResult_PendingImplCopyWith<$Res> {
-  factory _$$CashuMeltResult_PendingImplCopyWith(
-    _$CashuMeltResult_PendingImpl value,
-    $Res Function(_$CashuMeltResult_PendingImpl) then,
-  ) = __$$CashuMeltResult_PendingImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$CashuMeltResult_PendingImplCopyWithImpl<$Res>
-    extends _$CashuMeltResultCopyWithImpl<$Res, _$CashuMeltResult_PendingImpl>
-    implements _$$CashuMeltResult_PendingImplCopyWith<$Res> {
-  __$$CashuMeltResult_PendingImplCopyWithImpl(
-    _$CashuMeltResult_PendingImpl _value,
-    $Res Function(_$CashuMeltResult_PendingImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of CashuMeltResult
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$CashuMeltResult_PendingImpl extends CashuMeltResult_Pending {
-  const _$CashuMeltResult_PendingImpl() : super._();
 
-  @override
-  String toString() {
-    return 'CashuMeltResult.pending()';
-  }
+class CashuMeltResult_Paid extends CashuMeltResult {
+  const CashuMeltResult_Paid({required this.amountSats, required this.feePaidSats}): super._();
+  
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$CashuMeltResult_PendingImpl);
-  }
+ final  BigInt amountSats;
+ final  BigInt feePaidSats;
 
-  @override
-  int get hashCode => runtimeType.hashCode;
+/// Create a copy of CashuMeltResult
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CashuMeltResult_PaidCopyWith<CashuMeltResult_Paid> get copyWith => _$CashuMeltResult_PaidCopyWithImpl<CashuMeltResult_Paid>(this, _$identity);
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(BigInt amountSats, BigInt feePaidSats) paid,
-    required TResult Function() pending,
-  }) {
-    return pending();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult? Function()? pending,
-  }) {
-    return pending?.call();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(BigInt amountSats, BigInt feePaidSats)? paid,
-    TResult Function()? pending,
-    required TResult orElse(),
-  }) {
-    if (pending != null) {
-      return pending();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(CashuMeltResult_Paid value) paid,
-    required TResult Function(CashuMeltResult_Pending value) pending,
-  }) {
-    return pending(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(CashuMeltResult_Paid value)? paid,
-    TResult? Function(CashuMeltResult_Pending value)? pending,
-  }) {
-    return pending?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(CashuMeltResult_Paid value)? paid,
-    TResult Function(CashuMeltResult_Pending value)? pending,
-    required TResult orElse(),
-  }) {
-    if (pending != null) {
-      return pending(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CashuMeltResult_Paid&&(identical(other.amountSats, amountSats) || other.amountSats == amountSats)&&(identical(other.feePaidSats, feePaidSats) || other.feePaidSats == feePaidSats));
 }
 
-abstract class CashuMeltResult_Pending extends CashuMeltResult {
-  const factory CashuMeltResult_Pending() = _$CashuMeltResult_PendingImpl;
-  const CashuMeltResult_Pending._() : super._();
+
+@override
+int get hashCode => Object.hash(runtimeType,amountSats,feePaidSats);
+
+@override
+String toString() {
+  return 'CashuMeltResult.paid(amountSats: $amountSats, feePaidSats: $feePaidSats)';
 }
+
+
+}
+
+/// @nodoc
+abstract mixin class $CashuMeltResult_PaidCopyWith<$Res> implements $CashuMeltResultCopyWith<$Res> {
+  factory $CashuMeltResult_PaidCopyWith(CashuMeltResult_Paid value, $Res Function(CashuMeltResult_Paid) _then) = _$CashuMeltResult_PaidCopyWithImpl;
+@useResult
+$Res call({
+ BigInt amountSats, BigInt feePaidSats
+});
+
+
+
+
+}
+/// @nodoc
+class _$CashuMeltResult_PaidCopyWithImpl<$Res>
+    implements $CashuMeltResult_PaidCopyWith<$Res> {
+  _$CashuMeltResult_PaidCopyWithImpl(this._self, this._then);
+
+  final CashuMeltResult_Paid _self;
+  final $Res Function(CashuMeltResult_Paid) _then;
+
+/// Create a copy of CashuMeltResult
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? amountSats = null,Object? feePaidSats = null,}) {
+  return _then(CashuMeltResult_Paid(
+amountSats: null == amountSats ? _self.amountSats : amountSats // ignore: cast_nullable_to_non_nullable
+as BigInt,feePaidSats: null == feePaidSats ? _self.feePaidSats : feePaidSats // ignore: cast_nullable_to_non_nullable
+as BigInt,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CashuMeltResult_Pending extends CashuMeltResult {
+  const CashuMeltResult_Pending(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CashuMeltResult_Pending);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'CashuMeltResult.pending()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 mixin _$InvoiceVerdict {

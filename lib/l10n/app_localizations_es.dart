@@ -746,7 +746,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get drawerTitle => 'Mostro México';
 
   @override
-  String get drawerTagline => 'Exchange P2P';
+  String get drawerTagline => 'Intercambio P2P';
 
   @override
   String get drawerStageBadge => 'Beta';
