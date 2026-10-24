@@ -1549,451 +1549,299 @@ as int,
 
 /// @nodoc
 mixin _$TakePayout {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() defaultAddress,
-    required TResult Function(String address) address,
-    required TResult Function() askForInvoice,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? defaultAddress,
-    TResult? Function(String address)? address,
-    TResult? Function()? askForInvoice,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? defaultAddress,
-    TResult Function(String address)? address,
-    TResult Function()? askForInvoice,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(TakePayout_DefaultAddress value) defaultAddress,
-    required TResult Function(TakePayout_Address value) address,
-    required TResult Function(TakePayout_AskForInvoice value) askForInvoice,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult? Function(TakePayout_Address value)? address,
-    TResult? Function(TakePayout_AskForInvoice value)? askForInvoice,
-  }) => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult Function(TakePayout_Address value)? address,
-    TResult Function(TakePayout_AskForInvoice value)? askForInvoice,
-    required TResult orElse(),
-  }) => throw _privateConstructorUsedError;
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TakePayout);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'TakePayout()';
+}
+
+
 }
 
 /// @nodoc
-abstract class $TakePayoutCopyWith<$Res> {
-  factory $TakePayoutCopyWith(
-    TakePayout value,
-    $Res Function(TakePayout) then,
-  ) = _$TakePayoutCopyWithImpl<$Res, TakePayout>;
+class $TakePayoutCopyWith<$Res>  {
+$TakePayoutCopyWith(TakePayout _, $Res Function(TakePayout) __);
 }
 
-/// @nodoc
-class _$TakePayoutCopyWithImpl<$Res, $Val extends TakePayout>
-    implements $TakePayoutCopyWith<$Res> {
-  _$TakePayoutCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+/// Adds pattern-matching-related methods to [TakePayout].
+extension TakePayoutPatterns on TakePayout {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
 
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( TakePayout_DefaultAddress value)?  defaultAddress,TResult Function( TakePayout_Address value)?  address,TResult Function( TakePayout_AskForInvoice value)?  askForInvoice,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress() when defaultAddress != null:
+return defaultAddress(_that);case TakePayout_Address() when address != null:
+return address(_that);case TakePayout_AskForInvoice() when askForInvoice != null:
+return askForInvoice(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( TakePayout_DefaultAddress value)  defaultAddress,required TResult Function( TakePayout_Address value)  address,required TResult Function( TakePayout_AskForInvoice value)  askForInvoice,}){
+final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress():
+return defaultAddress(_that);case TakePayout_Address():
+return address(_that);case TakePayout_AskForInvoice():
+return askForInvoice(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( TakePayout_DefaultAddress value)?  defaultAddress,TResult? Function( TakePayout_Address value)?  address,TResult? Function( TakePayout_AskForInvoice value)?  askForInvoice,}){
+final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress() when defaultAddress != null:
+return defaultAddress(_that);case TakePayout_Address() when address != null:
+return address(_that);case TakePayout_AskForInvoice() when askForInvoice != null:
+return askForInvoice(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  defaultAddress,TResult Function( String address)?  address,TResult Function()?  askForInvoice,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress() when defaultAddress != null:
+return defaultAddress();case TakePayout_Address() when address != null:
+return address(_that.address);case TakePayout_AskForInvoice() when askForInvoice != null:
+return askForInvoice();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  defaultAddress,required TResult Function( String address)  address,required TResult Function()  askForInvoice,}) {final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress():
+return defaultAddress();case TakePayout_Address():
+return address(_that.address);case TakePayout_AskForInvoice():
+return askForInvoice();}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  defaultAddress,TResult? Function( String address)?  address,TResult? Function()?  askForInvoice,}) {final _that = this;
+switch (_that) {
+case TakePayout_DefaultAddress() when defaultAddress != null:
+return defaultAddress();case TakePayout_Address() when address != null:
+return address(_that.address);case TakePayout_AskForInvoice() when askForInvoice != null:
+return askForInvoice();case _:
+  return null;
+
+}
 }
 
-/// @nodoc
-abstract class _$$TakePayout_DefaultAddressImplCopyWith<$Res> {
-  factory _$$TakePayout_DefaultAddressImplCopyWith(
-    _$TakePayout_DefaultAddressImpl value,
-    $Res Function(_$TakePayout_DefaultAddressImpl) then,
-  ) = __$$TakePayout_DefaultAddressImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$TakePayout_DefaultAddressImplCopyWithImpl<$Res>
-    extends _$TakePayoutCopyWithImpl<$Res, _$TakePayout_DefaultAddressImpl>
-    implements _$$TakePayout_DefaultAddressImplCopyWith<$Res> {
-  __$$TakePayout_DefaultAddressImplCopyWithImpl(
-    _$TakePayout_DefaultAddressImpl _value,
-    $Res Function(_$TakePayout_DefaultAddressImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$TakePayout_DefaultAddressImpl extends TakePayout_DefaultAddress {
-  const _$TakePayout_DefaultAddressImpl() : super._();
-
-  @override
-  String toString() {
-    return 'TakePayout.defaultAddress()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TakePayout_DefaultAddressImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() defaultAddress,
-    required TResult Function(String address) address,
-    required TResult Function() askForInvoice,
-  }) {
-    return defaultAddress();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? defaultAddress,
-    TResult? Function(String address)? address,
-    TResult? Function()? askForInvoice,
-  }) {
-    return defaultAddress?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? defaultAddress,
-    TResult Function(String address)? address,
-    TResult Function()? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (defaultAddress != null) {
-      return defaultAddress();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(TakePayout_DefaultAddress value) defaultAddress,
-    required TResult Function(TakePayout_Address value) address,
-    required TResult Function(TakePayout_AskForInvoice value) askForInvoice,
-  }) {
-    return defaultAddress(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult? Function(TakePayout_Address value)? address,
-    TResult? Function(TakePayout_AskForInvoice value)? askForInvoice,
-  }) {
-    return defaultAddress?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult Function(TakePayout_Address value)? address,
-    TResult Function(TakePayout_AskForInvoice value)? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (defaultAddress != null) {
-      return defaultAddress(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class TakePayout_DefaultAddress extends TakePayout {
-  const factory TakePayout_DefaultAddress() = _$TakePayout_DefaultAddressImpl;
-  const TakePayout_DefaultAddress._() : super._();
-}
-
-/// @nodoc
-abstract class _$$TakePayout_AddressImplCopyWith<$Res> {
-  factory _$$TakePayout_AddressImplCopyWith(
-    _$TakePayout_AddressImpl value,
-    $Res Function(_$TakePayout_AddressImpl) then,
-  ) = __$$TakePayout_AddressImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String address});
-}
-
-/// @nodoc
-class __$$TakePayout_AddressImplCopyWithImpl<$Res>
-    extends _$TakePayoutCopyWithImpl<$Res, _$TakePayout_AddressImpl>
-    implements _$$TakePayout_AddressImplCopyWith<$Res> {
-  __$$TakePayout_AddressImplCopyWithImpl(
-    _$TakePayout_AddressImpl _value,
-    $Res Function(_$TakePayout_AddressImpl) _then,
-  ) : super(_value, _then);
-
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({Object? address = null}) {
-    return _then(
-      _$TakePayout_AddressImpl(
-        address:
-            null == address
-                ? _value.address
-                : address // ignore: cast_nullable_to_non_nullable
-                    as String,
-      ),
-    );
-  }
 }
 
 /// @nodoc
 
-class _$TakePayout_AddressImpl extends TakePayout_Address {
-  const _$TakePayout_AddressImpl({required this.address}) : super._();
 
-  @override
-  final String address;
+class TakePayout_DefaultAddress extends TakePayout {
+  const TakePayout_DefaultAddress(): super._();
+  
 
-  @override
-  String toString() {
-    return 'TakePayout.address(address: $address)';
-  }
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TakePayout_AddressImpl &&
-            (identical(other.address, address) || other.address == address));
-  }
 
-  @override
-  int get hashCode => Object.hash(runtimeType, address);
 
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TakePayout_AddressImplCopyWith<_$TakePayout_AddressImpl> get copyWith =>
-      __$$TakePayout_AddressImplCopyWithImpl<_$TakePayout_AddressImpl>(
-        this,
-        _$identity,
-      );
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() defaultAddress,
-    required TResult Function(String address) address,
-    required TResult Function() askForInvoice,
-  }) {
-    return address(this.address);
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? defaultAddress,
-    TResult? Function(String address)? address,
-    TResult? Function()? askForInvoice,
-  }) {
-    return address?.call(this.address);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? defaultAddress,
-    TResult Function(String address)? address,
-    TResult Function()? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (address != null) {
-      return address(this.address);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(TakePayout_DefaultAddress value) defaultAddress,
-    required TResult Function(TakePayout_Address value) address,
-    required TResult Function(TakePayout_AskForInvoice value) askForInvoice,
-  }) {
-    return address(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult? Function(TakePayout_Address value)? address,
-    TResult? Function(TakePayout_AskForInvoice value)? askForInvoice,
-  }) {
-    return address?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult Function(TakePayout_Address value)? address,
-    TResult Function(TakePayout_AskForInvoice value)? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (address != null) {
-      return address(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TakePayout_DefaultAddress);
 }
 
-abstract class TakePayout_Address extends TakePayout {
-  const factory TakePayout_Address({required final String address}) =
-      _$TakePayout_AddressImpl;
-  const TakePayout_Address._() : super._();
 
-  String get address;
+@override
+int get hashCode => runtimeType.hashCode;
 
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$TakePayout_AddressImplCopyWith<_$TakePayout_AddressImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+@override
+String toString() {
+  return 'TakePayout.defaultAddress()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class TakePayout_Address extends TakePayout {
+  const TakePayout_Address({required this.address}): super._();
+  
+
+ final  String address;
+
+/// Create a copy of TakePayout
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TakePayout_AddressCopyWith<TakePayout_Address> get copyWith => _$TakePayout_AddressCopyWithImpl<TakePayout_Address>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TakePayout_Address&&(identical(other.address, address) || other.address == address));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,address);
+
+@override
+String toString() {
+  return 'TakePayout.address(address: $address)';
+}
+
+
 }
 
 /// @nodoc
-abstract class _$$TakePayout_AskForInvoiceImplCopyWith<$Res> {
-  factory _$$TakePayout_AskForInvoiceImplCopyWith(
-    _$TakePayout_AskForInvoiceImpl value,
-    $Res Function(_$TakePayout_AskForInvoiceImpl) then,
-  ) = __$$TakePayout_AskForInvoiceImplCopyWithImpl<$Res>;
+abstract mixin class $TakePayout_AddressCopyWith<$Res> implements $TakePayoutCopyWith<$Res> {
+  factory $TakePayout_AddressCopyWith(TakePayout_Address value, $Res Function(TakePayout_Address) _then) = _$TakePayout_AddressCopyWithImpl;
+@useResult
+$Res call({
+ String address
+});
+
+
+
+
+}
+/// @nodoc
+class _$TakePayout_AddressCopyWithImpl<$Res>
+    implements $TakePayout_AddressCopyWith<$Res> {
+  _$TakePayout_AddressCopyWithImpl(this._self, this._then);
+
+  final TakePayout_Address _self;
+  final $Res Function(TakePayout_Address) _then;
+
+/// Create a copy of TakePayout
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? address = null,}) {
+  return _then(TakePayout_Address(
+address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
 }
 
-/// @nodoc
-class __$$TakePayout_AskForInvoiceImplCopyWithImpl<$Res>
-    extends _$TakePayoutCopyWithImpl<$Res, _$TakePayout_AskForInvoiceImpl>
-    implements _$$TakePayout_AskForInvoiceImplCopyWith<$Res> {
-  __$$TakePayout_AskForInvoiceImplCopyWithImpl(
-    _$TakePayout_AskForInvoiceImpl _value,
-    $Res Function(_$TakePayout_AskForInvoiceImpl) _then,
-  ) : super(_value, _then);
 
-  /// Create a copy of TakePayout
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$TakePayout_AskForInvoiceImpl extends TakePayout_AskForInvoice {
-  const _$TakePayout_AskForInvoiceImpl() : super._();
 
-  @override
-  String toString() {
-    return 'TakePayout.askForInvoice()';
-  }
+class TakePayout_AskForInvoice extends TakePayout {
+  const TakePayout_AskForInvoice(): super._();
+  
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TakePayout_AskForInvoiceImpl);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() defaultAddress,
-    required TResult Function(String address) address,
-    required TResult Function() askForInvoice,
-  }) {
-    return askForInvoice();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? defaultAddress,
-    TResult? Function(String address)? address,
-    TResult? Function()? askForInvoice,
-  }) {
-    return askForInvoice?.call();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? defaultAddress,
-    TResult Function(String address)? address,
-    TResult Function()? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (askForInvoice != null) {
-      return askForInvoice();
-    }
-    return orElse();
-  }
 
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(TakePayout_DefaultAddress value) defaultAddress,
-    required TResult Function(TakePayout_Address value) address,
-    required TResult Function(TakePayout_AskForInvoice value) askForInvoice,
-  }) {
-    return askForInvoice(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult? Function(TakePayout_Address value)? address,
-    TResult? Function(TakePayout_AskForInvoice value)? askForInvoice,
-  }) {
-    return askForInvoice?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(TakePayout_DefaultAddress value)? defaultAddress,
-    TResult Function(TakePayout_Address value)? address,
-    TResult Function(TakePayout_AskForInvoice value)? askForInvoice,
-    required TResult orElse(),
-  }) {
-    if (askForInvoice != null) {
-      return askForInvoice(this);
-    }
-    return orElse();
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TakePayout_AskForInvoice);
 }
 
-abstract class TakePayout_AskForInvoice extends TakePayout {
-  const factory TakePayout_AskForInvoice() = _$TakePayout_AskForInvoiceImpl;
-  const TakePayout_AskForInvoice._() : super._();
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'TakePayout.askForInvoice()';
 }
+
+
+}
+
+
+
 
 /// @nodoc
 mixin _$TradeStep {
